@@ -23,7 +23,7 @@ module.exports = {
       option
         .setName("username")
         .setDescription("Roblox username")
-        .setRequired(true)
+        .setRequired(true),
     )
     .setIntegrationTypes([
       ApplicationIntegrationType.GuildInstall,
@@ -53,7 +53,7 @@ module.exports = {
 
       if (badgeIds.length === 0) {
         return interaction.editReply(
-          `No JToH tower badges found for **${username}**.`
+          `No JToH tower badges found for **${username}**.`,
         );
       }
 
@@ -61,7 +61,7 @@ module.exports = {
 
       if (awardedTowers.length === 0) {
         return interaction.editReply(
-          `No JToH tower badges found for **${username}**.`
+          `No JToH tower badges found for **${username}**.`,
         );
       }
 
@@ -72,14 +72,14 @@ module.exports = {
 
       const filteredTowerData = towerData.filter(
         (tower) =>
-          tower.locationType !== "event" && tower.towerType !== "MiniTower"
+          tower.locationType !== "event" && tower.towerType !== "MiniTower",
       );
 
       badgeInfo
         .filter((badge) => badge.category === "Beating Tower")
         .forEach((badge) => {
           const tower = filteredTowerData.find(
-            (t) => t.acronym === badge.acronym && t.difficultyName
+            (t) => t.acronym === badge.acronym && t.difficultyName,
           );
           if (tower) {
             totalDifficultyCounts[tower.difficultyName] =
@@ -89,7 +89,7 @@ module.exports = {
 
       const totalTowersInGame = Object.values(totalDifficultyCounts).reduce(
         (sum, count) => sum + count,
-        0
+        0,
       );
 
       const towerCounts = {
@@ -110,8 +110,8 @@ module.exports = {
           badge.towerType === "Citadel"
             ? 2
             : badge.towerType === "Steeple"
-            ? 0.5
-            : 1;
+              ? 0.5
+              : 1;
 
         towerCounts[badge.towerType.toLowerCase() + "s"] += 1;
 
@@ -131,7 +131,7 @@ module.exports = {
         towerCounts.towers + towerCounts.citadels + towerCounts.steeples;
 
       const totalCompletionPercentage = Math.round(
-        (totalTowersCompleted / totalTowersInGame) * 100
+        (totalTowersCompleted / totalTowersInGame) * 100,
       );
 
       const difficultyOrder = [
@@ -181,14 +181,14 @@ module.exports = {
           {
             name: "Difficulty",
             value: difficultyFields || "No towers completed yet.",
-          }
+          },
         );
 
       return interaction.editReply({ embeds: [embed] });
     } catch (error) {
       console.error(error);
       return interaction.editReply(
-        "An error occurred while executing this command."
+        "An error occurred while executing this command.",
       );
     }
   },
