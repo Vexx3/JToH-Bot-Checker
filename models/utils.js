@@ -43,7 +43,7 @@ async function fetchRobloxAvatar(robloxId) {
         userIds: robloxId,
         size: "150x150",
         format: "Png",
-        isCircular: true,
+        isCircular: false,
       },
     },
   );
