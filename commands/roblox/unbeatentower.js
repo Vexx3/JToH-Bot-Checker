@@ -113,10 +113,10 @@ module.exports = {
                 ? `**${username}** has beaten all towers in JToH!`
                 : topTowers
                     .map((tower) => {
-                      const area = areaData.find(
-                        (area) => area.acronym === tower.areaCode
+                      const matchedArea = areaData.find(
+                        (currentArea) => currentArea.acronym === tower.areaCode
                       );
-                      const areaName = area ? area.areaName : "Unknown Area";
+                      const areaName = matchedArea ? matchedArea.areaName : "Unknown Area";
 
                       return `**[${
                         difficultyEmojis[tower.difficultyName] || ""
