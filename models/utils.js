@@ -76,7 +76,7 @@ async function fetchRobloxId(username) {
     }
   );
   const data = await response.body.json();
-  return data.data && data.data[0] ? data.data[0].id : null;
+  return data.data?.[0] ? data.data[0].id : null;
 }
 
 async function fetchRobloxUserInfo(robloxId) {
@@ -254,7 +254,7 @@ async function fetchBadgeInfo() {
   try {
     const response = await request(url);
     const rows = await response.body.json();
-    if (rows.values && rows.values.length) {
+    if (rows.values?.length) {
       return rows.values.map((row) => ({
         badgeId: Number(row[0].replace(/"/g, "")),
         category: row[5],
@@ -278,7 +278,7 @@ async function fetchTowerDifficultyData() {
   try {
     const response = await request(url);
     const rows = await response.body.json();
-    if (rows.values && rows.values.length) {
+    if (rows.values?.length) {
       return rows.values.map((row) => ({
         name: row[0],
         acronym: row[1],
@@ -307,7 +307,7 @@ async function fetchAreaData() {
   try {
     const response = await request(url);
     const rows = await response.body.json();
-    if (rows.values && rows.values.length) {
+    if (rows.values?.length) {
       return rows.values.map((row) => ({
         areaName: row[0],
         acronym: row[3],
