@@ -30,9 +30,9 @@ module.exports = {
       sent.createdTimestamp - interaction.createdTimestamp;
 
     await interaction.editReply(
-      `🏓 Pong! Here are my current stats:\n\n` +
+      "🏓 Pong! Here are my current stats:\n\n" +
         `**🌐 WebSocket Heartbeat:** \`${websocketPing}ms\`\n` +
-        `**⏱️ Roundtrip Latency:** \`${roundtripLatency}ms\``
+        `**⏱️ Roundtrip Latency:** \`${roundtripLatency}ms\``,
     );
   },
 };

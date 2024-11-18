@@ -36,7 +36,7 @@ const difficultyEmojis = {
 
 async function fetchRobloxAvatar(robloxId) {
   const avatarResponse = await request(
-    `https://thumbnails.roblox.com/v1/users/avatar-bust`,
+    "https://thumbnails.roblox.com/v1/users/avatar-bust",
     {
       method: "GET",
       query: {
@@ -68,7 +68,7 @@ async function fetchRobloxAvatar(robloxId) {
 
 async function fetchRobloxId(username) {
   const response = await request(
-    `https://users.roblox.com/v1/usernames/users`,
+    "https://users.roblox.com/v1/usernames/users",
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -116,7 +116,7 @@ async function fetchJToHBadges() {
     while (attempts < maxRetries) {
       try {
         const badgesResponse = await request(
-          `https://badges.roblox.com/v1/universes/3264581003/badges`,
+          "https://badges.roblox.com/v1/universes/3264581003/badges",
           {
             method: "GET",
             query: { limit: 100, cursor: nextCursor, sortOrder: "Asc" },
