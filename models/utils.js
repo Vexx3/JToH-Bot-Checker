@@ -45,7 +45,7 @@ async function fetchRobloxAvatar(robloxId) {
         format: "Png",
         isCircular: true,
       },
-    },
+    }
   );
 
   const avatarUrl =
@@ -59,7 +59,7 @@ async function fetchRobloxAvatar(robloxId) {
     console.error(
       `Failed to fetch avatar image: ${
         avatarResponse.statusCode
-      } - ${await avatarResponse.body.text()}`,
+      } - ${await avatarResponse.body.text()}`
     );
   }
 
@@ -73,7 +73,7 @@ async function fetchRobloxId(username) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ usernames: [username] }),
-    },
+    }
   );
   const data = await response.body.json();
   return data.data?.[0] ? data.data[0].id : null;
@@ -82,7 +82,7 @@ async function fetchRobloxId(username) {
 async function fetchRobloxUserInfo(robloxId) {
   try {
     const userResponse = await request(
-      `https://users.roblox.com/v1/users/${robloxId}`,
+      `https://users.roblox.com/v1/users/${robloxId}`
     );
 
     if (userResponse.statusCode === 200) {
@@ -111,7 +111,7 @@ async function fetchJToHBadges() {
 
   do {
     let attempts = 0;
-    let badgesData;
+    let badgesData = null;
 
     while (attempts < maxRetries) {
       try {
@@ -120,14 +120,14 @@ async function fetchJToHBadges() {
           {
             method: "GET",
             query: { limit: 100, cursor: nextCursor, sortOrder: "Asc" },
-          },
+          }
         );
 
         if (badgesResponse.statusCode !== 200) {
           console.error(
             `Error fetching JToH badges (Attempt ${attempts + 1}): ${
               badgesResponse.status
-            }`,
+            }`
           );
         } else {
           badgesData = await badgesResponse.body.json();
@@ -168,7 +168,7 @@ async function fetchAwardedDates(userId, badgeIds) {
       try {
         const awardedDatesResponse = await request(
           `https://badges.roblox.com/v1/users/${userId}/badges/awarded-dates`,
-          { method: "GET", query: { badgeIds: batch.join(",") } },
+          { method: "GET", query: { badgeIds: batch.join(",") } }
         );
 
         if (awardedDatesResponse.statusCode === 200) {
@@ -180,19 +180,19 @@ async function fetchAwardedDates(userId, badgeIds) {
           console.warn(
             `Rate-limited (Attempt ${attempts + 1}). Retrying after ${
               RATE_LIMIT_DELAY / 1000
-            } seconds.`,
+            } seconds.`
           );
           await new Promise((resolve) => setTimeout(resolve, RATE_LIMIT_DELAY));
         } else {
           console.error(
             `Unexpected error (Attempt ${attempts + 1}): ${
               awardedDatesResponse.statusCode
-            }`,
+            }`
           );
         }
       } catch (error) {
         console.error(
-          `Request failed (Attempt ${attempts + 1}): ${error.message}`,
+          `Request failed (Attempt ${attempts + 1}): ${error.message}`
         );
       }
 
@@ -215,12 +215,12 @@ async function fetchAwardedDates(userId, badgeIds) {
   const filteredBadges = allAwardedDates
     .map((awarded) => {
       const matchedJToHBadge = jtohBadges.find(
-        (jtohBadge) => jtohBadge.badgeId === awarded.badgeId,
+        (jtohBadge) => jtohBadge.badgeId === awarded.badgeId
       );
 
       if (matchedJToHBadge && matchedJToHBadge.category === "Beating Tower") {
         const towerData = towerDifficultyData.find(
-          (tower) => tower.acronym === matchedJToHBadge.acronym,
+          (tower) => tower.acronym === matchedJToHBadge.acronym
         );
 
         if (
@@ -240,6 +240,8 @@ async function fetchAwardedDates(userId, badgeIds) {
           };
         }
       }
+
+      return undefined;
     })
     .filter(Boolean);
 
