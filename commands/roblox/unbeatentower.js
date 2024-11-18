@@ -25,7 +25,7 @@ module.exports = {
       option
         .setName("username")
         .setDescription("Roblox username")
-        .setRequired(true)
+        .setRequired(true),
     )
     .setIntegrationTypes([
       ApplicationIntegrationType.GuildInstall,
@@ -55,7 +55,7 @@ module.exports = {
 
       if (badgeIds.length === 0) {
         return interaction.editReply(
-          `No JToH tower badges found for **${username}**.`
+          `No JToH tower badges found for **${username}**.`,
         );
       }
 
@@ -63,7 +63,7 @@ module.exports = {
 
       if (awardedTowers.length === 0) {
         return interaction.editReply(
-          `No JToH tower badges found for **${username}**.`
+          `No JToH tower badges found for **${username}**.`,
         );
       }
 
@@ -114,7 +114,7 @@ module.exports = {
                 : topTowers
                     .map((tower) => {
                       const area = areaData.find(
-                        (area) => area.acronym === tower.areaCode
+                        (area) => area.acronym === tower.areaCode,
                       );
                       const areaName = area ? area.areaName : "Unknown Area";
 
@@ -125,14 +125,14 @@ module.exports = {
                       }) - ${areaName}`;
                     })
                     .join("\n"),
-          }
+          },
         );
 
       return interaction.editReply({ embeds: [embed] });
     } catch (error) {
       console.error(error);
       return interaction.editReply(
-        "An error occurred while executing this command."
+        "An error occurred while executing this command.",
       );
     }
   },

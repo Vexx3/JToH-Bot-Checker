@@ -11,13 +11,13 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("gradient")
     .setDescription(
-      "Generates a gradient for a specified number of floors with random colors."
+      "Generates a gradient for a specified number of floors with random colors.",
     )
     .addIntegerOption((option) =>
       option
         .setName("floors")
         .setDescription("The number of floors (5-25). Defaults to 10.")
-        .setRequired(false)
+        .setRequired(false),
     )
     .setIntegrationTypes([
       ApplicationIntegrationType.GuildInstall,
@@ -73,9 +73,7 @@ module.exports = {
     const embed = new EmbedBuilder()
       .setTitle("Tower Gradient Idea")
       .setColor("#2F3136")
-      .setDescription(
-        "This is the tower gradient idea with random colors:"
-      )
+      .setDescription("This is the tower gradient idea with random colors:")
       .setImage("attachment://gradient.png");
 
     colorData.forEach((color) => {
