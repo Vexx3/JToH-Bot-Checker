@@ -22,7 +22,7 @@ module.exports = {
       option
         .setName("username")
         .setDescription("Roblox username")
-        .setRequired(true),
+        .setRequired(true)
     )
     .setIntegrationTypes([
       ApplicationIntegrationType.GuildInstall,
@@ -52,7 +52,7 @@ module.exports = {
 
       if (badgeIds.length === 0) {
         return interaction.editReply(
-          `No JToH tower badges found for **${username}**.`,
+          `No JToH tower badges found for **${username}**.`
         );
       }
 
@@ -60,12 +60,12 @@ module.exports = {
 
       if (awardedTowers.length === 0) {
         return interaction.editReply(
-          `No JToH tower badges found for **${username}**.`,
+          `No JToH tower badges found for **${username}**.`
         );
       }
 
       awardedTowers.sort(
-        (a, b) => new Date(b.awardedDate) - new Date(a.awardedDate),
+        (a, b) => new Date(b.awardedDate) - new Date(a.awardedDate)
       );
       const top10RecentTowers = awardedTowers.slice(0, 10);
 
@@ -90,18 +90,18 @@ module.exports = {
                   `**[${difficultyEmojis[tower.difficultyName] || ""}]** ${
                     tower.acronym
                   } (${tower.numDifficulty}) - <t:${Math.floor(
-                    new Date(tower.awardedDate).getTime() / 1000,
-                  )}:R>`,
+                    new Date(tower.awardedDate).getTime() / 1000
+                  )}:R>`
               )
               .join("\n"),
-          },
+          }
         );
 
       return interaction.editReply({ embeds: [embed] });
     } catch (error) {
       console.error(error);
       return interaction.editReply(
-        "An error occurred while executing this command.",
+        "An error occurred while executing this command."
       );
     }
   },

@@ -17,9 +17,9 @@ module.exports = {
       option
         .setName("tower")
         .setDescription(
-          "The name/acronym of the tower you want information about.",
+          "The name/acronym of the tower you want information about."
         )
-        .setRequired(true),
+        .setRequired(true)
     )
     .setIntegrationTypes([
       ApplicationIntegrationType.GuildInstall,
@@ -59,7 +59,7 @@ module.exports = {
       }
 
       const difficultyMatch = description.match(
-        /\b(is a|is an) (\w+) difficulty\b/i,
+        /\b(is a|is an) (\w+) difficulty\b/i
       );
       const difficultyLevel = difficultyMatch
         ? difficultyMatch[2].toLowerCase()
@@ -82,7 +82,7 @@ module.exports = {
               description.length > 1024
                 ? description.slice(0, 1021) + "..."
                 : description,
-          },
+          }
         )
         .setFooter({ text: "Source: Juke's Towers of Hell Wiki." });
 
@@ -109,7 +109,7 @@ function extractTowerTitle($) {
 
 function extractInfo($, label) {
   const infoElements = $(
-    `h3.pi-data-label.pi-secondary-font:contains('${label}')`,
+    `h3.pi-data-label.pi-secondary-font:contains('${label}')`
   ).next("div.pi-data-value.pi-font");
 
   return infoElements.length
@@ -127,7 +127,7 @@ function extractInfo($, label) {
 
 function extractCreators($) {
   const creators = $(
-    "h3.pi-data-label.pi-secondary-font:contains('Creator(s)')",
+    "h3.pi-data-label.pi-secondary-font:contains('Creator(s)')"
   )
     .next("div.pi-data-value.pi-font")
     .find("b")

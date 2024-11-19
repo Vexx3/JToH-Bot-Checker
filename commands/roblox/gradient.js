@@ -11,13 +11,13 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("gradient")
     .setDescription(
-      "Generates a gradient for a specified number of floors with random colors.",
+      "Generates a gradient for a specified number of floors with random colors."
     )
     .addIntegerOption((option) =>
       option
         .setName("floors")
         .setDescription("The number of floors (5-25). Defaults to 10.")
-        .setRequired(false),
+        .setRequired(false)
     )
     .setIntegrationTypes([
       ApplicationIntegrationType.GuildInstall,
