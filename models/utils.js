@@ -1,6 +1,20 @@
 const { request } = require("undici");
 require("dotenv").config();
 
+const difficultyOrder = [
+  "easy",
+  "medium",
+  "hard",
+  "difficult",
+  "challenging",
+  "intense",
+  "remorseless",
+  "insane",
+  "extreme",
+  "terrifying",
+  "catastrophic",
+];
+
 const difficultyColors = {
   easy: "#75F347",
   medium: "#FFFE00",
@@ -237,7 +251,7 @@ async function fetchAwardedDates(userId, badgeIds) {
         }
       }
 
-      return undefined;
+      return null;
     })
     .filter(Boolean);
 
@@ -335,6 +349,7 @@ function chunkArray(array, chunkSize) {
 }
 
 module.exports = {
+  difficultyOrder,
   difficultyColors,
   difficultyEmojis,
   fetchRobloxUserInfo,

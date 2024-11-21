@@ -5,6 +5,7 @@ const {
   InteractionContextType,
 } = require("discord.js");
 const {
+  difficultyOrder,
   difficultyEmojis,
   fetchRobloxAvatar,
   fetchRobloxId,
@@ -137,20 +138,6 @@ module.exports = {
       const totalCompletionPercentage = Math.round(
         (totalTowersCompleted / totalTowersInGame) * 100
       );
-
-      const difficultyOrder = [
-        "easy",
-        "medium",
-        "hard",
-        "difficult",
-        "challenging",
-        "intense",
-        "remorseless",
-        "insane",
-        "extreme",
-        "terrifying",
-        "catastrophic",
-      ];
 
       const difficultyFields = difficultyOrder
         .filter((difficulty) => difficultyCounts[difficulty])

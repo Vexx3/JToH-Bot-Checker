@@ -3,8 +3,13 @@ const {
   EmbedBuilder,
   ApplicationIntegrationType,
   InteractionContextType,
+  ActionRowBuilder,
+  StringSelectMenuBuilder,
+  StringSelectMenuOptionBuilder,
+  ComponentType,
 } = require("discord.js");
 const {
+  difficultyOrder,
   difficultyColors,
   difficultyEmojis,
   fetchRobloxAvatar,
@@ -49,19 +54,11 @@ module.exports = {
       }
 
       const avatarUrl = await fetchRobloxAvatar(robloxId);
-
       const jtohBadges = await fetchJToHBadges(robloxId);
       const badgeIds = jtohBadges.map((badge) => badge.id);
-
-      if (badgeIds.length === 0) {
-        return interaction.editReply(
-          `No JToH tower badges found for **${username}**.`
-        );
-      }
-
       const awardedTowers = await fetchAwardedDates(robloxId, badgeIds);
 
-      if (awardedTowers.length === 0) {
+      if (!awardedTowers?.length) {
         return interaction.editReply(
           `No JToH tower badges found for **${username}**.`
         );
@@ -89,44 +86,111 @@ module.exports = {
       unbeatenTowers.sort((a, b) => a.numDifficulty - b.numDifficulty);
       const topTowers = unbeatenTowers.slice(0, 10);
 
-      const unbeatenTowerDifficulty =
-        topTowers[0]?.difficultyName || ":question:";
-      const embedColor = difficultyColors[unbeatenTowerDifficulty] || "#58b9ff";
-      const embed = new EmbedBuilder()
-        .setTitle("The top 10 easiest unbeaten tower(s)")
-        .setColor(embedColor)
-        .setThumbnail(avatarUrl)
-        .addFields(
-          {
-            name: "Player",
-            value: username,
-            inline: true,
-          },
-          {
-            name: "List of tower",
-            value:
-              unbeatenTowers.length === 0
-                ? `**${username}** has beaten all towers in JToH!`
-                : topTowers
-                    .map((tower) => {
-                      const matchedArea = areaData.find(
-                        (currentArea) => currentArea.acronym === tower.areaCode
-                      );
-                      const areaName = matchedArea
-                        ? matchedArea.areaName
-                        : "Unknown Area";
+      const createEmbed = (towers) => {
+        const easiestDifficulty = towers[0]?.difficultyName;
+        const embedColor = difficultyColors[easiestDifficulty];
+        return new EmbedBuilder()
+          .setTitle("The top 10 easiest unbeaten tower(s)")
+          .setColor(embedColor)
+          .setThumbnail(avatarUrl)
+          .addFields(
+            {
+              name: "Player",
+              value: username,
+              inline: true,
+            },
+            {
+              name: "List of tower",
+              value:
+                towers.length === 0
+                  ? `**${username}** has beaten all towers in JToH!`
+                  : towers
+                      .map((tower) => {
+                        const matchedArea = areaData.find(
+                          (currentArea) =>
+                            currentArea.acronym === tower.areaCode
+                        );
+                        const areaName = matchedArea
+                          ? matchedArea.areaName
+                          : "Unknown Area";
 
-                      return `**[${
-                        difficultyEmojis[tower.difficultyName] || ""
-                      }]** ${tower.acronym} (${
-                        tower.numDifficulty
-                      }) - ${areaName}`;
-                    })
-                    .join("\n"),
+                        return `**[${
+                          difficultyEmojis[tower.difficultyName] || ""
+                        }]** ${tower.acronym} (${
+                          tower.numDifficulty
+                        }) - ${areaName}`;
+                      })
+                      .join("\n"),
+            }
+          );
+      };
+
+      const embed = createEmbed(topTowers);
+
+      const sortedDifficulties = [
+        ...new Set(unbeatenTowers.map((t) => t.difficultyName)),
+      ].sort(
+        (a, b) =>
+          difficultyOrder.indexOf(a.toLowerCase()) -
+          difficultyOrder.indexOf(b.toLowerCase())
+      );
+
+      const selectMenu = new ActionRowBuilder().addComponents(
+        new StringSelectMenuBuilder()
+          .setCustomId("filter_difficulty")
+          .setPlaceholder("Select a difficulty to filter")
+          .addOptions([
+            new StringSelectMenuOptionBuilder()
+              .setLabel("Show All")
+              .setValue("all")
+              .setDescription("Reset to default")
+              .setEmoji("🔄"),
+            ...sortedDifficulties.map((difficulty) =>
+              new StringSelectMenuOptionBuilder()
+                .setLabel(
+                  difficulty.charAt(0).toUpperCase() + difficulty.slice(1)
+                )
+                .setValue(difficulty)
+                .setDescription(`Show only ${difficulty} towers`)
+                .setEmoji(difficultyEmojis[difficulty] || null)
+            ),
+          ])
+      );
+
+      const reply = await interaction.editReply({
+        embeds: [embed],
+        components: [selectMenu],
+      });
+
+      const collector = reply.createMessageComponentCollector({
+        componentType: ComponentType.StringSelect,
+        filter: (i) => i.user.id === interaction.user.id,
+        time: 60000,
+      });
+
+      collector.on("collect", async (i) => {
+        if (i.customId === "filter_difficulty") {
+          const selectedDifficulty = i.values[0];
+
+          if (selectedDifficulty === "all") {
+            const defaultEmbed = createEmbed(topTowers);
+            await i.update({ embeds: [defaultEmbed] });
+          } else {
+            console.log(unbeatenTowers);
+            const filteredTowers = unbeatenTowers
+              .filter((tower) => tower.difficultyName === selectedDifficulty)
+              .slice(0, 10);
+
+            const filteredEmbed = createEmbed(filteredTowers);
+            await i.update({ embeds: [filteredEmbed] });
           }
-        );
+        }
+      });
 
-      return interaction.editReply({ embeds: [embed] });
+      collector.on("end", () => {
+        selectMenu.components[0].setDisabled(true);
+        interaction.editReply({ components: [selectMenu] });
+      });
     } catch (error) {
       console.error(error);
       return interaction.editReply(

@@ -46,19 +46,12 @@ module.exports = {
       }
 
       const avatarUrl = await fetchRobloxAvatar(robloxId);
-
       const jtohBadges = await fetchJToHBadges(robloxId);
       const badgeIds = jtohBadges.map((badge) => badge.id);
 
-      if (badgeIds.length === 0) {
-        return interaction.editReply(
-          `No JToH tower badges found for **${username}**.`
-        );
-      }
-
       const awardedTowers = await fetchAwardedDates(robloxId, badgeIds);
 
-      if (awardedTowers.length === 0) {
+      if (!awardedTowers?.length) {
         return interaction.editReply(
           `No JToH tower badges found for **${username}**.`
         );
@@ -69,8 +62,7 @@ module.exports = {
       );
       const top10RecentTowers = awardedTowers.slice(0, 10);
 
-      const hardestTowerDifficulty =
-        top10RecentTowers[0]?.difficultyName || ":question:";
+      const hardestTowerDifficulty = top10RecentTowers[0]?.difficultyName;
       const embedColor = difficultyColors[hardestTowerDifficulty];
       const embed = new EmbedBuilder()
         .setTitle("The top 10 most recent tower(s)")
