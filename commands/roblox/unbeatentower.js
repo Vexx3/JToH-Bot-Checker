@@ -88,7 +88,7 @@ module.exports = {
 
       const createEmbed = (towers) => {
         const easiestDifficulty = towers[0]?.difficultyName;
-        const embedColor = difficultyColors[easiestDifficulty];
+        const embedColor = difficultyColors[easiestDifficulty] || "#99AAb5";
         return new EmbedBuilder()
           .setTitle("The top 10 easiest unbeaten tower(s)")
           .setColor(embedColor)
