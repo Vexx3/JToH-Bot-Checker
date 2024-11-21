@@ -176,7 +176,6 @@ module.exports = {
             const defaultEmbed = createEmbed(topTowers);
             await i.update({ embeds: [defaultEmbed] });
           } else {
-            console.log(unbeatenTowers);
             const filteredTowers = unbeatenTowers
               .filter((tower) => tower.difficultyName === selectedDifficulty)
               .slice(0, 10);
