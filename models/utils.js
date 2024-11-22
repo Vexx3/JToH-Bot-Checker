@@ -2,6 +2,8 @@ const { request } = require("undici");
 require("dotenv").config();
 
 const difficultyOrder = [
+  "epic",
+  "korn",
   "easy",
   "medium",
   "hard",
@@ -17,7 +19,6 @@ const difficultyOrder = [
   "unreal",
   "nil",
   "gingerbread",
-  "korn",
 ];
 
 const difficultyColors = {
@@ -53,6 +54,8 @@ const difficultyEmojis = {
   unreal: "<:Unreal:1307191608390848532>",
   gingerbread: "<:gingerbread:1309374694721323028>",
   korn: "<:korn:1309374994110742608>",
+  nil: "<:nil:1309384772878995467>",
+  epic: "<:epic:1309384795318648923>",
 };
 
 async function fetchRobloxAvatar(robloxId) {
