@@ -72,12 +72,14 @@ module.exports = {
         .setThumbnail(avatarUrl)
         .setDescription(
           "**The list of towers:**\n" +
-            creatorTowers.map((tower) => {
-              const emoji = tower.difficultyName
-                ? difficultyEmojis[tower.difficultyName.toLowerCase()]
-                : ":question:";
-              return `**[${emoji}]** ${tower.name}`;
-            })
+            creatorTowers
+              .map((tower) => {
+                const emoji = tower.difficultyName
+                  ? difficultyEmojis[tower.difficultyName.toLowerCase()]
+                  : ":question:";
+                return `**[${emoji}]** ${tower.name}`;
+              })
+              .join("\n")
         );
 
       return interaction.editReply({ embeds: [embed] });
