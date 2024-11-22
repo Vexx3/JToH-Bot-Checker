@@ -13,6 +13,11 @@ const difficultyOrder = [
   "extreme",
   "terrifying",
   "catastrophic",
+  "horrific",
+  "unreal",
+  "nil",
+  "gingerbread",
+  "korn",
 ];
 
 const difficultyColors = {
@@ -46,6 +51,8 @@ const difficultyEmojis = {
   catastrophic: "<:Catastrophic:1307191569736269885>",
   horrific: "<:Horrific:1307191589189193728>",
   unreal: "<:Unreal:1307191608390848532>",
+  gingerbread: "<:gingerbread:1309374694721323028>",
+  korn: "<:korn:1309374994110742608>",
 };
 
 async function fetchRobloxAvatar(robloxId) {

@@ -5,6 +5,7 @@ const {
   InteractionContextType,
 } = require("discord.js");
 const {
+  difficultyOrder,
   fetchTowerDifficultyData,
   difficultyEmojis,
   fetchRobloxAvatar,
@@ -18,7 +19,7 @@ module.exports = {
     .addStringOption((option) =>
       option
         .setName("username")
-        .setDescription("The creator's username")
+        .setDescription("Roblox username")
         .setRequired(true)
     )
     .setIntegrationTypes([
@@ -43,9 +44,21 @@ module.exports = {
 
       const avatarUrl = await fetchRobloxAvatar(robloxId);
       const towerData = await fetchTowerDifficultyData();
-      const creatorTowers = towerData.filter((tower) =>
-        tower.creators.toLowerCase().includes(username.toLowerCase())
-      );
+      const creatorTowers = towerData
+        .filter(
+          (tower) =>
+            tower.creators &&
+            tower.creators.toLowerCase().includes(username.toLowerCase())
+        )
+        .sort((a, b) => {
+          const difficultyA = difficultyOrder.indexOf(
+            a.difficultyName.toLowerCase()
+          );
+          const difficultyB = difficultyOrder.indexOf(
+            b.difficultyName.toLowerCase()
+          );
+          return difficultyA - difficultyB;
+        });
 
       if (!creatorTowers?.length) {
         return interaction.editReply(
@@ -54,18 +67,20 @@ module.exports = {
       }
 
       const embed = new EmbedBuilder()
-        .setTitle("Towers by creator")
+        .setTitle(`Towers by ${username}`)
         .setColor("#58b9ff")
         .setThumbnail(avatarUrl)
-        .addFields({
-          name: "The list of towers",
-          value: creatorTowers
-            .map(
-              (tower) =>
-                `**[${difficultyEmojis[tower.difficultyName]}]** ${tower.name}`
-            )
-            .join("\n"),
-        });
+        .setDescription(
+          "**The list of towers:**\n" +
+            creatorTowers
+              .map(
+                (tower) =>
+                  `**[${difficultyEmojis[tower.difficultyName]}]** ${
+                    tower.name
+                  }`
+              )
+              .join("\n")
+        );
 
       return interaction.editReply({ embeds: [embed] });
     } catch (error) {
