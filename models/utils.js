@@ -300,6 +300,7 @@ async function fetchTowerDifficultyData() {
         locationType: row[6]?.toLowerCase(),
         areaCode: row[7],
         towerType: row[8],
+        creators: row[13],
       }));
     } else {
       console.log("No data found in Tower Difficulty.");
