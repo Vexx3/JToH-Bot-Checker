@@ -80,11 +80,10 @@ module.exports = {
             name: "Description",
             value:
               description.length > 1024
-                ? description.slice(0, 1021) + "..."
+                ? `${description.slice(0, 1021)}...`
                 : description,
           }
-        )
-        .setFooter({ text: "Source: Juke's Towers of Hell Wiki." });
+        );
 
       await interaction.editReply({ embeds: [towerEmbed] });
     } catch (error) {

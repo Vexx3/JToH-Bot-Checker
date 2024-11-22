@@ -71,15 +71,14 @@ module.exports = {
         .setColor("#58b9ff")
         .setThumbnail(avatarUrl)
         .setDescription(
-          "**The list of towers:**\n" +
-            creatorTowers
-              .map((tower) => {
-                const emoji = tower.difficultyName
-                  ? difficultyEmojis[tower.difficultyName.toLowerCase()]
-                  : ":question:";
-                return `**[${emoji}]** ${tower.name}`;
-              })
-              .join("\n")
+          `**The list of towers:**\n${creatorTowers
+            .map((tower) => {
+              const emoji = tower.difficultyName
+                ? difficultyEmojis[tower.difficultyName.toLowerCase()]
+                : ":question:";
+              return `**[${emoji}]** ${tower.name}`;
+            })
+            .join("\n")}`
         );
 
       return interaction.editReply({ embeds: [embed] });
