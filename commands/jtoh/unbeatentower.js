@@ -71,7 +71,7 @@ module.exports = {
       const unbeatenBadges = badgeInfo.filter((badge) => {
         return (
           badge.category === "Beating Tower" &&
-          !awardedTowers.some((userBadge) => userBadge.id === badge.badgeId)
+          !awardedTowers.some((userBadge) => userBadge.id === badge.oldBadgeId || userBadge.id === badge.badgeId)
         );
       });
 

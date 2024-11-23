@@ -129,54 +129,56 @@ async function fetchRobloxUserInfo(robloxId) {
 }
 
 async function fetchJToHBadges() {
+  const universeIds = [3264581003, 1055653882];
   let allBadges = [];
-  let nextCursor = null;
-  const maxRetries = 3;
+  const maxRetries = 5;
 
-  do {
-    let attempts = 0;
-    let badgesData = null;
+  for (const universeId of universeIds) {
+    let nextCursor = null;
 
-    while (attempts < maxRetries) {
-      try {
-        const badgesResponse = await request(
-          "https://badges.roblox.com/v1/universes/3264581003/badges",
-          {
-            method: "GET",
-            query: { limit: 100, cursor: nextCursor, sortOrder: "Asc" },
-          }
-        );
+    do {
+      let attempts = 0;
+      let badgesData = null;
 
-        if (badgesResponse.statusCode !== 200) {
-          console.error(
-            `Error fetching JToH badges (Attempt ${attempts + 1}): ${
-              badgesResponse.status
-            }`
+      while (attempts < maxRetries) {
+        try {
+          const badgesResponse = await request(
+            `https://badges.roblox.com/v1/universes/${universeId}/badges`,
+            {
+              method: "GET",
+              query: { limit: 100, cursor: nextCursor, sortOrder: "Asc" },
+            }
           );
-        } else {
-          badgesData = await badgesResponse.body.json();
-          break;
+
+          if (badgesResponse.statusCode !== 200) {
+            console.error(
+              `Error fetching JToH badges for universe ${universeId} (Attempt ${
+                attempts + 1
+              }): ${badgesResponse.status}`
+            );
+          } else {
+            badgesData = await badgesResponse.body.json();
+            const badges = badgesData.data.map((badge) => ({
+              id: badge.id,
+              name: badge.name,
+            }));
+            allBadges = allBadges.concat(badges);
+            nextCursor = badgesData.nextPageCursor;
+            break;
+          }
+        } catch (error) {
+          console.error(
+            `Error in fetchJToHBadges for universe ${universeId}:`,
+            error
+          );
         }
-      } catch (error) {
-        console.error(`Request failed (Attempt ${attempts + 1}): ${error}`);
+
+        attempts++;
       }
+    } while (nextCursor);
+  }
 
-      attempts += 1;
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    }
-
-    if (!badgesData) {
-      throw new Error("Failed to fetch JToH badges after multiple attempts.");
-    }
-
-    allBadges = allBadges.concat(badgesData.data);
-    nextCursor = badgesData.nextPageCursor;
-  } while (nextCursor);
-
-  return allBadges.map((badge) => ({
-    id: badge.id,
-    name: badge.name,
-  }));
+  return allBadges;
 }
 
 const RATE_LIMIT_DELAY = 15000;
@@ -202,7 +204,7 @@ async function fetchAwardedDates(userId, badgeIds) {
 
         if (awardedDatesResponse.statusCode === 429) {
           console.warn(
-            `Rate-limited (Attempt ${attempts + 1}). Retrying after ${
+            `Rate limit hit, (Attempt ${attempts + 1}). Retrying after ${
               RATE_LIMIT_DELAY / 1000
             } seconds.`
           );
@@ -236,11 +238,18 @@ async function fetchAwardedDates(userId, badgeIds) {
   const jtohBadges = await fetchBadgeInfo();
   const towerDifficultyData = await fetchTowerDifficultyData();
 
+  const uniqueBadges = new Set();
   const filteredBadges = allAwardedDates
     .map((awarded) => {
-      const matchedJToHBadge = jtohBadges.find(
-        (jtohBadge) => jtohBadge.badgeId === awarded.badgeId
+      let matchedJToHBadge = jtohBadges.find(
+        (jtohBadge) => jtohBadge.oldBadgeId === awarded.badgeId
       );
+
+      if (!matchedJToHBadge) {
+        matchedJToHBadge = jtohBadges.find(
+          (jtohBadge) => jtohBadge.badgeId === awarded.badgeId
+        );
+      }
 
       if (matchedJToHBadge && matchedJToHBadge.category === "Beating Tower") {
         const towerData = towerDifficultyData.find(
@@ -248,16 +257,20 @@ async function fetchAwardedDates(userId, badgeIds) {
         );
 
         if (towerData && towerData.locationType !== "event") {
-          return {
-            name: matchedJToHBadge.name,
-            id: awarded.badgeId,
-            acronym: matchedJToHBadge.acronym,
-            difficultyName: towerData.difficultyName,
-            numDifficulty: towerData.numDifficulty,
-            location: towerData.location,
-            towerType: towerData.towerType,
-            awardedDate: awarded.awardedDate,
-          };
+          const badgeKey = matchedJToHBadge.acronym;
+          if (!uniqueBadges.has(badgeKey)) {
+            uniqueBadges.add(badgeKey);
+            return {
+              name: matchedJToHBadge.name,
+              id: awarded.badgeId,
+              acronym: matchedJToHBadge.acronym,
+              difficultyName: towerData.difficultyName,
+              numDifficulty: towerData.numDifficulty,
+              location: towerData.location,
+              towerType: towerData.towerType,
+              awardedDate: awarded.awardedDate,
+            };
+          }
         }
       }
 
@@ -279,6 +292,8 @@ async function fetchBadgeInfo() {
     if (rows.values?.length) {
       return rows.values.map((row) => ({
         badgeId: Number(row[0].replace(/"/g, "")),
+        oldBadgeId: Number(row[1]),
+        ktohBadgeId: row[2],
         category: row[5],
         acronym: row[6],
       }));
