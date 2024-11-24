@@ -46,96 +46,98 @@ module.exports = {
 
     const username = interaction.options.getString("username");
 
-    try {
-      const robloxId = await fetchRobloxId(username);
+    const robloxId = await fetchRobloxId(username);
 
-      if (!robloxId) {
-        return interaction.editReply(`User ${username} not found.`);
-      }
+    if (!robloxId) {
+      return interaction.editReply(`User ${username} not found.`);
+    }
 
-      const avatarUrl = await fetchRobloxAvatar(robloxId);
-      const jtohBadges = await fetchJToHBadges(robloxId);
-      const badgeIds = jtohBadges.map((badge) => badge.id);
-      const awardedTowers = await fetchAwardedDates(robloxId, badgeIds);
+    const avatarUrl = await fetchRobloxAvatar(robloxId);
+    const jtohBadges = await fetchJToHBadges(robloxId);
+    const badgeIds = jtohBadges.map((badge) => badge.id);
+    const awardedTowers = await fetchAwardedDates(robloxId, badgeIds);
 
-      if (!awardedTowers?.length) {
-        return interaction.editReply(
-          `No JToH tower badges found for **${username}**.`
-        );
-      }
+    if (!awardedTowers?.length) {
+      return interaction.editReply(
+        `No JToH tower badges found for **${username}**.`
+      );
+    }
 
-      const allTowerData = await fetchTowerDifficultyData();
-      const areaData = await fetchAreaData();
-      const badgeInfo = await fetchBadgeInfo();
+    const allTowerData = await fetchTowerDifficultyData();
+    const areaData = await fetchAreaData();
+    const badgeInfo = await fetchBadgeInfo();
 
-      const unbeatenBadges = badgeInfo.filter((badge) => {
-        return (
-          badge.category === "Beating Tower" &&
-          !awardedTowers.some((userBadge) => userBadge.id === badge.oldBadgeId || userBadge.id === badge.badgeId)
-        );
+    const unbeatenBadges = badgeInfo.filter((badge) => {
+      return (
+        badge.category === "Beating Tower" &&
+        !awardedTowers.some(
+          (userBadge) =>
+            userBadge.id === badge.oldBadgeId || userBadge.id === badge.badgeId
+        )
+      );
+    });
+
+    const unbeatenTowers = unbeatenBadges
+      .map((badge) => {
+        return allTowerData.find((tower) => tower.acronym === badge.acronym);
+      })
+      .filter((tower) => {
+        return tower && tower.locationType !== "event";
       });
 
-      const unbeatenTowers = unbeatenBadges
-        .map((badge) => {
-          return allTowerData.find((tower) => tower.acronym === badge.acronym);
-        })
-        .filter((tower) => {
-          return tower && tower.locationType !== "event";
-        });
+    unbeatenTowers.sort((a, b) => a.numDifficulty - b.numDifficulty);
+    const topTowers = unbeatenTowers.slice(0, 10);
 
-      unbeatenTowers.sort((a, b) => a.numDifficulty - b.numDifficulty);
-      const topTowers = unbeatenTowers.slice(0, 10);
+    const createEmbed = (towers) => {
+      const easiestDifficulty = towers[0]?.difficultyName;
+      const embedColor = difficultyColors[easiestDifficulty] || "#99AAb5";
+      return new EmbedBuilder()
+        .setTitle("The top 10 easiest unbeaten tower(s)")
+        .setColor(embedColor)
+        .setThumbnail(avatarUrl)
+        .addFields(
+          {
+            name: "Player",
+            value: username,
+            inline: true,
+          },
+          {
+            name: "List of tower",
+            value:
+              towers.length === 0
+                ? `**${username}** has beaten all towers in JToH!`
+                : towers
+                    .map((tower) => {
+                      const matchedArea = areaData.find(
+                        (currentArea) => currentArea.acronym === tower.areaCode
+                      );
+                      const areaName = matchedArea
+                        ? matchedArea.areaName
+                        : "Unknown Area";
 
-      const createEmbed = (towers) => {
-        const easiestDifficulty = towers[0]?.difficultyName;
-        const embedColor = difficultyColors[easiestDifficulty] || "#99AAb5";
-        return new EmbedBuilder()
-          .setTitle("The top 10 easiest unbeaten tower(s)")
-          .setColor(embedColor)
-          .setThumbnail(avatarUrl)
-          .addFields(
-            {
-              name: "Player",
-              value: username,
-              inline: true,
-            },
-            {
-              name: "List of tower",
-              value:
-                towers.length === 0
-                  ? `**${username}** has beaten all towers in JToH!`
-                  : towers
-                      .map((tower) => {
-                        const matchedArea = areaData.find(
-                          (currentArea) =>
-                            currentArea.acronym === tower.areaCode
-                        );
-                        const areaName = matchedArea
-                          ? matchedArea.areaName
-                          : "Unknown Area";
+                      return `**[${
+                        difficultyEmojis[tower.difficultyName] || ""
+                      }]** ${tower.acronym} (${
+                        tower.numDifficulty
+                      }) - ${areaName}`;
+                    })
+                    .join("\n"),
+          }
+        );
+    };
 
-                        return `**[${
-                          difficultyEmojis[tower.difficultyName] || ""
-                        }]** ${tower.acronym} (${
-                          tower.numDifficulty
-                        }) - ${areaName}`;
-                      })
-                      .join("\n"),
-            }
-          );
-      };
+    const embed = createEmbed(topTowers);
 
-      const embed = createEmbed(topTowers);
+    const sortedDifficulties = [
+      ...new Set(unbeatenTowers.map((t) => t.difficultyName)),
+    ].sort(
+      (a, b) =>
+        difficultyOrder.indexOf(a.toLowerCase()) -
+        difficultyOrder.indexOf(b.toLowerCase())
+    );
 
-      const sortedDifficulties = [
-        ...new Set(unbeatenTowers.map((t) => t.difficultyName)),
-      ].sort(
-        (a, b) =>
-          difficultyOrder.indexOf(a.toLowerCase()) -
-          difficultyOrder.indexOf(b.toLowerCase())
-      );
-
-      const selectMenu = new ActionRowBuilder().addComponents(
+    const createSelectMenu = (selectedDifficulty) => {
+      return new ActionRowBuilder().addComponents(
         new StringSelectMenuBuilder()
           .setCustomId("filter_difficulty")
           .setPlaceholder("Select a difficulty to filter")
@@ -144,7 +146,8 @@ module.exports = {
               .setLabel("Show All")
               .setValue("all")
               .setDescription("Reset to default")
-              .setEmoji("🔄"),
+              .setEmoji("🔄")
+              .setDefault(selectedDifficulty === "all"),
             ...sortedDifficulties.map((difficulty) =>
               new StringSelectMenuOptionBuilder()
                 .setLabel(
@@ -153,48 +156,55 @@ module.exports = {
                 .setValue(difficulty)
                 .setDescription(`Show only ${difficulty} towers`)
                 .setEmoji(difficultyEmojis[difficulty] || null)
+                .setDefault(selectedDifficulty === difficulty)
             ),
           ])
       );
+    };
 
-      const reply = await interaction.editReply({
-        embeds: [embed],
-        components: [selectMenu],
-      });
+    let lastSelectedDifficulty = "all";
 
-      const collector = reply.createMessageComponentCollector({
-        componentType: ComponentType.StringSelect,
-        filter: (i) => i.user.id === interaction.user.id,
-        time: 60000,
-      });
+    const reply = await interaction.editReply({
+      embeds: [embed],
+      components: [createSelectMenu(lastSelectedDifficulty)],
+    });
 
-      collector.on("collect", async (i) => {
-        if (i.customId === "filter_difficulty") {
-          const selectedDifficulty = i.values[0];
+    const collector = reply.createMessageComponentCollector({
+      componentType: ComponentType.StringSelect,
+      filter: (i) => i.user.id === interaction.user.id,
+      time: 60000,
+    });
 
-          if (selectedDifficulty === "all") {
-            const defaultEmbed = createEmbed(topTowers);
-            await i.update({ embeds: [defaultEmbed] });
-          } else {
-            const filteredTowers = unbeatenTowers
-              .filter((tower) => tower.difficultyName === selectedDifficulty)
-              .slice(0, 10);
+    collector.on("collect", async (i) => {
+      if (i.customId === "filter_difficulty") {
+        await i.deferUpdate();
 
-            const filteredEmbed = createEmbed(filteredTowers);
-            await i.update({ embeds: [filteredEmbed] });
-          }
+        lastSelectedDifficulty = i.values[0];
+
+        if (lastSelectedDifficulty === "all") {
+          const defaultEmbed = createEmbed(topTowers);
+          await i.editReply({
+            embeds: [defaultEmbed],
+            components: [createSelectMenu(lastSelectedDifficulty)],
+          });
+        } else {
+          const filteredTowers = unbeatenTowers
+            .filter((tower) => tower.difficultyName === lastSelectedDifficulty)
+            .slice(0, 10);
+
+          const filteredEmbed = createEmbed(filteredTowers);
+          await i.editReply({
+            embeds: [filteredEmbed],
+            components: [createSelectMenu(lastSelectedDifficulty)],
+          });
         }
-      });
+      }
+    });
 
-      collector.on("end", () => {
-        selectMenu.components[0].setDisabled(true);
-        interaction.editReply({ components: [selectMenu] });
-      });
-    } catch (error) {
-      console.error(error);
-      return interaction.editReply(
-        "An error occurred while executing this command."
-      );
-    }
+    collector.on("end", () => {
+      const disabledSelectMenu = createSelectMenu(lastSelectedDifficulty);
+      disabledSelectMenu.components[0].setDisabled(true);
+      interaction.editReply({ components: [disabledSelectMenu] });
+    });
   },
 };

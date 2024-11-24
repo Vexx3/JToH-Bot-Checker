@@ -38,63 +38,56 @@ module.exports = {
 
     const username = interaction.options.getString("username");
 
-    try {
-      const robloxId = await fetchRobloxId(username);
+    const robloxId = await fetchRobloxId(username);
 
-      if (!robloxId) {
-        return interaction.editReply(`User ${username} not found.`);
-      }
+    if (!robloxId) {
+      return interaction.editReply(`User ${username} not found.`);
+    }
 
-      const avatarUrl = await fetchRobloxAvatar(robloxId);
-      const jtohBadges = await fetchJToHBadges(robloxId);
-      const badgeIds = jtohBadges.map((badge) => badge.id);
+    const avatarUrl = await fetchRobloxAvatar(robloxId);
+    const jtohBadges = await fetchJToHBadges(robloxId);
+    const badgeIds = jtohBadges.map((badge) => badge.id);
 
-      const awardedTowers = await fetchAwardedDates(robloxId, badgeIds);
+    const awardedTowers = await fetchAwardedDates(robloxId, badgeIds);
 
-      if (!awardedTowers?.length) {
-        return interaction.editReply(
-          `No JToH tower badges found for **${username}**.`
-        );
-      }
-
-      awardedTowers.sort(
-        (a, b) => new Date(b.awardedDate) - new Date(a.awardedDate)
-      );
-      const top10RecentTowers = awardedTowers.slice(0, 10);
-
-      const hardestTowerDifficulty = top10RecentTowers[0]?.difficultyName;
-      const embedColor = difficultyColors[hardestTowerDifficulty];
-      const embed = new EmbedBuilder()
-        .setTitle("The top 10 most recent tower(s)")
-        .setColor(embedColor)
-        .setThumbnail(avatarUrl)
-        .addFields(
-          {
-            name: "Player",
-            value: username,
-            inline: true,
-          },
-          {
-            name: "List of tower",
-            value: top10RecentTowers
-              .map(
-                (tower) =>
-                  `**[${difficultyEmojis[tower.difficultyName] || ""}]** ${
-                    tower.acronym
-                  } (${tower.numDifficulty}) - <t:${Math.floor(
-                    new Date(tower.awardedDate).getTime() / 1000
-                  )}:R>`
-              )
-              .join("\n"),
-          }
-        );
-
-      return interaction.editReply({ embeds: [embed] });
-    } catch (error) {
-      console.error(error);
+    if (!awardedTowers?.length) {
       return interaction.editReply(
-        "An error occurred while executing this command."
+        `No JToH tower badges found for **${username}**.`
       );
     }
+
+    awardedTowers.sort(
+      (a, b) => new Date(b.awardedDate) - new Date(a.awardedDate)
+    );
+    const top10RecentTowers = awardedTowers.slice(0, 10);
+
+    const hardestTowerDifficulty = top10RecentTowers[0]?.difficultyName;
+    const embedColor = difficultyColors[hardestTowerDifficulty];
+    const embed = new EmbedBuilder()
+      .setTitle("The top 10 most recent tower(s)")
+      .setColor(embedColor)
+      .setThumbnail(avatarUrl)
+      .addFields(
+        {
+          name: "Player",
+          value: username,
+          inline: true,
+        },
+        {
+          name: "List of tower",
+          value: top10RecentTowers
+            .map(
+              (tower) =>
+                `**[${difficultyEmojis[tower.difficultyName] || ""}]** ${
+                  tower.acronym
+                } (${tower.numDifficulty}) - <t:${Math.floor(
+                  new Date(tower.awardedDate).getTime() / 1000
+                )}:R>`
+            )
+            .join("\n"),
+        }
+      );
+
+    return interaction.editReply({ embeds: [embed] });
   },
 };

@@ -50,11 +50,9 @@ module.exports = {
       const description = extractDescription($);
 
       if (!length || !difficulty || !creator || !imageUrl || !description) {
-        await interaction.reply({
-          content:
-            "Could not retrieve tower information. Please check the tower name and try again.",
-          ephemeral: true,
-        });
+        await interaction.editReply(
+          "Could not retrieve tower information. Please check the tower name and try again."
+        );
         return;
       }
 
@@ -88,11 +86,9 @@ module.exports = {
       await interaction.editReply({ embeds: [towerEmbed] });
     } catch (error) {
       console.error(error);
-      await interaction.editReply({
-        content:
-          "There was an error fetching the tower information. Please try again later.",
-        ephemeral: true,
-      });
+      await interaction.editReply(
+        "There was an error fetching the tower information. Please try again later."
+      );
     }
   },
 };

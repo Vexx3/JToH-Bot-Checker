@@ -154,7 +154,7 @@ async function fetchJToHBadges() {
             console.error(
               `Error fetching JToH badges for universe ${universeId} (Attempt ${
                 attempts + 1
-              }): ${badgesResponse.status}`
+              }): ${badgesResponse.statusCode}`
             );
           } else {
             badgesData = await badgesResponse.body.json();
@@ -203,11 +203,6 @@ async function fetchAwardedDates(userId, badgeIds) {
         }
 
         if (awardedDatesResponse.statusCode === 429) {
-          console.warn(
-            `Rate limit hit, (Attempt ${attempts + 1}). Retrying after ${
-              RATE_LIMIT_DELAY / 1000
-            } seconds.`
-          );
           await new Promise((resolve) => setTimeout(resolve, RATE_LIMIT_DELAY));
         } else {
           console.error(
@@ -222,7 +217,7 @@ async function fetchAwardedDates(userId, badgeIds) {
         );
       }
 
-      attempts += 1;
+      attempts++;
       await new Promise((resolve) => setTimeout(resolve, RATE_LIMIT_DELAY));
     }
 
