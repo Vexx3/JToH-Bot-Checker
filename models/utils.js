@@ -129,7 +129,7 @@ async function fetchRobloxUserInfo(robloxId) {
 }
 
 async function fetchJToHBadges() {
-  const universeIds = [3264581003, 1055653882];
+  const universeIds = [1055653882, 3264581003];
   let allBadges = [];
   const maxRetries = 5;
 
@@ -211,7 +211,7 @@ async function fetchAwardedDates(userId, badgeIds) {
             }`
           );
         }
-      } catch (error) {
+      } catch {
         console.error(
           `Request failed (Attempt ${attempts + 1}): ${error.message}`
         );
@@ -236,15 +236,11 @@ async function fetchAwardedDates(userId, badgeIds) {
   const uniqueBadges = new Set();
   const filteredBadges = allAwardedDates
     .map((awarded) => {
-      let matchedJToHBadge = jtohBadges.find(
-        (jtohBadge) => jtohBadge.oldBadgeId === awarded.badgeId
+      const matchedJToHBadge = jtohBadges.find(
+        (jtohBadge) =>
+          jtohBadge.oldBadgeId === awarded.badgeId ||
+          jtohBadge.badgeId === awarded.badgeId
       );
-
-      if (!matchedJToHBadge) {
-        matchedJToHBadge = jtohBadges.find(
-          (jtohBadge) => jtohBadge.badgeId === awarded.badgeId
-        );
-      }
 
       if (matchedJToHBadge && matchedJToHBadge.category === "Beating Tower") {
         const towerData = towerDifficultyData.find(
