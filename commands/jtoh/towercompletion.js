@@ -73,7 +73,10 @@ module.exports = {
       .filter((badge) => badge.category === "Beating Tower")
       .forEach((badge) => {
         const tower = filteredTowerData.find(
-          (t) => t.acronym === badge.acronym && t.difficultyName
+          (t) =>
+            t.acronym === badge.acronym &&
+            t.difficultyName &&
+            t.towerType !== "MiniTower"
         );
 
         if (tower) {
@@ -126,21 +129,19 @@ module.exports = {
     });
 
     const totalTowersCompleted =
-      towerCounts.towers +
-      towerCounts.citadels +
-      towerCounts.steeples +
-      towerCounts.minitowers;
+      towerCounts.towers + towerCounts.citadels + towerCounts.steeples;
 
-    const totalCompletionPercentage = Math.round(
-      (totalTowersCompleted / totalTowersInGame) * 100
-    );
+    const totalCompletionPercentage = (
+      (totalTowersCompleted / totalTowersInGame) *
+      100
+    ).toFixed(1);
 
     const difficultyFields = difficultyOrder
       .filter((difficulty) => difficultyCounts[difficulty])
       .map((difficulty) => {
         const completed = difficultyCounts[difficulty] || 0;
         const total = totalDifficultyCounts[difficulty];
-        const percentage = Math.round((completed / total) * 100);
+        const percentage = ((completed / total) * 100).toFixed(1);
         return `**[${
           difficultyEmojis[difficulty] || ""
         }]** - ${completed}/${total} (${percentage}%)`;
