@@ -1,14 +1,16 @@
-const { Events, ActivityType, ClientApplication } = require("discord.js");
+const { Events, ActivityType } = require("discord.js");
 
 module.exports = {
   name: Events.ClientReady,
   once: true,
   async execute(client) {
     console.log(`Ready! Logged in as ${client.user.tag}`);
-    const serverCount = await ClientApplication.approximateGuildCount;
-    const userCount = await ClientApplication.approximateUserCount;
+    const serverCount = client.guilds.cache.size;
+    const userCount = await client.application
+      .fetch()
+      .then((app) => app.approximateUserInstallCount);
 
-    const status = `Serving ${serverCount} servers and ${userCount} installed users`;
+    const status = `Serving ${serverCount} servers, and ${userCount} installed users`;
 
     client.user.setActivity({
       type: ActivityType.Custom,
