@@ -5,8 +5,8 @@ module.exports = {
   once: true,
   async execute(client) {
     console.log(`Ready! Logged in as ${client.user.tag}`);
-    const serverCount = ClientApplication.approximateGuildCount;
-    const userCount = ClientApplication.approximateUserCount;
+    const serverCount = await ClientApplication.approximateGuildCount;
+    const userCount = await ClientApplication.approximateUserCount;
 
     const status = `Serving ${serverCount} servers and ${userCount} installed users`;
 
