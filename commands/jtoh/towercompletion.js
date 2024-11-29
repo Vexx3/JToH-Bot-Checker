@@ -129,7 +129,10 @@ module.exports = {
     });
 
     const totalTowersCompleted =
-      towerCounts.towers + towerCounts.citadels + towerCounts.steeples;
+      towerCounts.towers +
+      towerCounts.citadels +
+      towerCounts.steeples +
+      towerCounts.minitowers;
 
     const totalCompletionPercentage = (
       (totalTowersCompleted / totalTowersInGame) *
