@@ -4,7 +4,7 @@ const {
   ApplicationIntegrationType,
   InteractionContextType,
 } = require("discord.js");
-const User = require("../../models/User")
+const User = require("../../models/User");
 const {
   difficultyOrder,
   difficultyEmojis,
@@ -73,7 +73,10 @@ module.exports = {
       .filter((badge) => badge.category === "Beating Tower")
       .forEach((badge) => {
         const tower = filteredTowerData.find(
-          (t) => t.acronym === badge.acronym && t.difficultyName
+          (t) =>
+            t.acronym === badge.acronym &&
+            t.difficultyName &&
+            t.towerType !== "MiniTower"
         );
         if (tower) {
           totalDifficultyCounts[tower.difficultyName] =
