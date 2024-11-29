@@ -73,10 +73,7 @@ module.exports = {
       .filter((badge) => badge.category === "Beating Tower")
       .forEach((badge) => {
         const tower = filteredTowerData.find(
-          (t) =>
-            t.acronym === badge.acronym &&
-            t.difficultyName &&
-            t.towerType !== "MiniTower"
+          (t) => t.acronym === badge.acronym && t.difficultyName
         );
 
         if (tower) {
