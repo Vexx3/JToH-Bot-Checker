@@ -66,14 +66,17 @@ module.exports = {
     const totalDifficultyCounts = {};
 
     const filteredTowerData = towerData.filter(
-      (tower) => tower.locationType !== "event" && tower.towerType !== "MiniTower"
+      (tower) => tower.locationType !== "event" && t.towerType !== "MiniTower"
     );
 
     badgeInfo
       .filter((badge) => badge.category === "Beating Tower")
       .forEach((badge) => {
         const tower = filteredTowerData.find(
-          (t) => t.acronym === badge.acronym && t.difficultyName
+          (t) =>
+            t.acronym === badge.acronym &&
+            t.difficultyName &&
+            t.towerType !== "MiniTower"
         );
         if (tower) {
           totalDifficultyCounts[tower.difficultyName] =
@@ -90,6 +93,7 @@ module.exports = {
       towers: 0,
       citadels: 0,
       steeples: 0,
+      minitowers: 0,
     };
 
     const locationPoints = {
@@ -109,16 +113,18 @@ module.exports = {
 
       towerCounts[`${badge.towerType.toLowerCase()}s`] += 1;
 
-      if (badge.location === "ring") {
-        locationPoints.Ring += points;
-      } else if (badge.location === "zone") {
-        locationPoints.Zone += points;
-      }
+      if (badge.towerType !== "MiniTower") {
+        if (badge.location === "ring") {
+          locationPoints.Ring += points;
+        } else if (badge.location === "zone") {
+          locationPoints.Zone += points;
+        }
 
-      if (!difficultyCounts[badge.difficultyName]) {
-        difficultyCounts[badge.difficultyName] = 0;
+        if (!difficultyCounts[badge.difficultyName]) {
+          difficultyCounts[badge.difficultyName] = 0;
+        }
+        difficultyCounts[badge.difficultyName] += 1;
       }
-      difficultyCounts[badge.difficultyName] += 1;
     });
 
     const totalTowersCompleted =
@@ -156,7 +162,7 @@ module.exports = {
         },
         {
           name: "Tower type",
-          value: `Towers: ${towerCounts.towers}\nCitadels: ${towerCounts.citadels}\nSteeples: ${towerCounts.steeples}`,
+          value: `Towers: ${towerCounts.towers}\nCitadels: ${towerCounts.citadels}\nSteeples: ${towerCounts.steeples}\nMini Towers: ${towerCounts.minitowers}`,
         },
         {
           name: "Difficulty",

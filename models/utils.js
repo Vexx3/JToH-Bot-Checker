@@ -284,7 +284,7 @@ async function fetchBadgeInfo() {
       return rows.values.map((row) => ({
         badgeId: Number(row[0].replace(/"/g, "")),
         oldBadgeId: Number(row[1]),
-        ktohBadgeId: row[2],
+        ktohBadgeId: Number(row[2]),
         category: row[5],
         acronym: row[6],
       }));
