@@ -66,7 +66,7 @@ module.exports = {
     const totalDifficultyCounts = {};
 
     const filteredTowerData = towerData.filter(
-      (tower) => tower.locationType !== "event" && t.towerType !== "MiniTower"
+      (tower) => tower.locationType !== "event" && tower.towerType !== "MiniTower"
     );
 
     badgeInfo
