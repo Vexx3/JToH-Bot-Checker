@@ -315,6 +315,7 @@ async function fetchTowerDifficultyData() {
         difficultyName: row[4],
         locationType: row[6]?.toLowerCase(),
         areaCode: row[7],
+        accessible: row[10],
         towerType: row[8],
         creators: row[13],
       }));

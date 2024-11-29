@@ -82,10 +82,16 @@ module.exports = {
         }
       });
 
-    const totalTowersInGame = Object.values(totalDifficultyCounts).reduce(
-      (sum, count) => sum + count,
-      0
-    );
+    const totalTowersInGame = badgeInfo.filter(
+      (badge) =>
+        badge.category === "Beating Tower" &&
+        filteredTowerData.some(
+          (t) =>
+            t.acronym === badge.acronym &&
+            t.difficultyName &&
+            t.towerType !== "MiniTower"
+        )
+    ).length;
 
     const towerCounts = {
       towers: 0,
@@ -126,10 +132,7 @@ module.exports = {
     });
 
     const totalTowersCompleted =
-      towerCounts.towers +
-      towerCounts.citadels +
-      towerCounts.steeples +
-      towerCounts.minitowers;
+      towerCounts.towers + towerCounts.citadels + towerCounts.steeples;
 
     const totalCompletionPercentage = (
       (totalTowersCompleted / totalTowersInGame) *
