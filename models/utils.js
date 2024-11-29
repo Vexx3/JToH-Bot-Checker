@@ -211,7 +211,7 @@ async function fetchAwardedDates(userId, badgeIds) {
             }`
           );
         }
-      } catch {
+      } catch (error) {
         console.error(
           `Request failed (Attempt ${attempts + 1}): ${error.message}`
         );
