@@ -6,9 +6,12 @@ module.exports = {
   execute(client) {
     console.log(`Ready! Logged in as ${client.user.tag}`);
     const serverCount = client.guilds.cache.size;
-    const userCount = client.users.cache.size;
+    const userCount = client.guilds.cache.reduce(
+      (acc, guild) => acc + guild.memberCount,
+      0
+    );
 
-    const status = `Serving ${serverCount} servers and ${userCount} users`;
+    const status = `Serving ${serverCount} servers and ${userCount} installed users`;
 
     client.user.setActivity({
       type: ActivityType.Custom,
