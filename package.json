@@ -12,6 +12,7 @@
   "description": "Bot for juke's towers of hell.",
   "dependencies": {
     "@napi-rs/canvas": "^0.1.61",
+    "chart.js": "^4.4.6",
     "cheerio": "^1.0.0",
     "discord.js": "^14.16.3",
     "dotenv": "^16.4.5",
