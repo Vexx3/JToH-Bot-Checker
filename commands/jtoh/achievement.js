@@ -196,7 +196,7 @@ module.exports = {
       .setDescription(`Chart Type: ${cumulative ? "Cumulative" : "Monthly"}`)
       .setThumbnail(avatarUrl)
       .setImage("attachment://achievement.png")
-      .setFooter("Click on the image to enlarge");
+      .setFooter({ text: "Click on the image to enlarge" });
 
     await interaction.editReply({ embeds: [embed], files: [attachment] });
   },
