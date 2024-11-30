@@ -192,7 +192,8 @@ module.exports = {
       .setTitle(`Achievements for ${username}`)
       .setColor("#58b9ff")
       .setDescription(`Chart Type: ${cumulative ? "Cumulative" : "Monthly"}`)
-      .setImage("attachment://achievement.png");
+      .setImage("attachment://achievement.png")
+      .setFooter("Click on the image to enlarge");
 
     await interaction.editReply({ embeds: [embed], files: [attachment] });
   },
