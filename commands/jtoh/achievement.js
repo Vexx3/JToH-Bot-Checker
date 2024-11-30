@@ -50,6 +50,7 @@ module.exports = {
       return interaction.editReply(`User ${username} not found.`);
     }
 
+    const avatarUrl = await fetchRobloxAvatar(robloxId);
     const jtohBadges = await fetchJToHBadges(robloxId);
     const badgeIds = jtohBadges.map((badge) => badge.id);
     const awardedTowers = await fetchAwardedDates(robloxId, badgeIds);
@@ -192,6 +193,7 @@ module.exports = {
       .setTitle(`Achievements for ${username}`)
       .setColor("#58b9ff")
       .setDescription(`Chart Type: ${cumulative ? "Cumulative" : "Monthly"}`)
+      .setThumbnail(avatarUrl)
       .setImage("attachment://achievement.png")
       .setFooter("Click on the image to enlarge");
 
