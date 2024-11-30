@@ -3,7 +3,7 @@ const redis = require("redis");
 const { promisify } = require("util");
 require("dotenv").config();
 
-const client = redis.createClient({
+const redisClient = redis.createClient({
   password: process.env.REDIS_PASSWORD,
   socket: {
     host: process.env.REDIS_HOST,
@@ -11,10 +11,8 @@ const client = redis.createClient({
   },
 });
 
-const getAsync = promisify(client.get).bind(client);
-const setAsync = promisify(client.set).bind(client);
-
-client.connect().catch(console.error);
+const getAsync = promisify(redisClient.get).bind(redisClient);
+const setAsync = promisify(redisClient.set).bind(redisClient);
 
 const difficultyOrder = [
   "epic",
