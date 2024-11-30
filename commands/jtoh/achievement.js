@@ -9,6 +9,7 @@ const { createCanvas } = require("@napi-rs/canvas");
 const Chart = require("chart.js/auto");
 const {
   fetchRobloxId,
+  fetchRobloxAvatar,
   fetchAwardedDates,
   fetchJToHBadges,
   difficultyColors,
