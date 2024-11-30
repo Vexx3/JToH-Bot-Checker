@@ -14,9 +14,7 @@ const client = redis.createClient({
 const getAsync = promisify(client.get).bind(client);
 const setAsync = promisify(client.set).bind(client);
 
-client.on("error", (err) => {
-  console.error("Redis error:", err);
-});
+client.connect().catch(console.error);
 
 const difficultyOrder = [
   "epic",
