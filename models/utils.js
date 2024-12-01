@@ -1,18 +1,7 @@
 const { request } = require("undici");
-const redis = require("redis");
 const { promisify } = require("util");
+const redisClient = require("./redis");
 require("dotenv").config();
-
-const redisClient = redis.createClient({
-  password: process.env.REDIS_PASSWORD,
-  socket: {
-    host: process.env.REDIS_HOST,
-    port: process.env.REDIS_PORT,
-  },
-});
-
-const getAsync = promisify(redisClient.get).bind(redisClient);
-const setAsync = promisify(redisClient.set).bind(redisClient);
 
 const difficultyOrder = [
   "epic",
@@ -198,7 +187,7 @@ const RATE_LIMIT_DELAY = 15000;
 
 async function fetchAwardedDates(userId, badgeIds) {
   const cacheKey = `awardedDates_${userId}`;
-  const cachedData = await getAsync(cacheKey);
+  const cachedData = await redisClient.get(cacheKey);
 
   if (cachedData) {
     return JSON.parse(cachedData);
@@ -289,7 +278,7 @@ async function fetchAwardedDates(userId, badgeIds) {
     })
     .filter(Boolean);
 
-  await setAsync(cacheKey, JSON.stringify(filteredBadges), "EX", 600);
+  await redisClient.set(cacheKey, JSON.stringify(filteredBadges), "EX", 600);
 
   return filteredBadges;
 }
