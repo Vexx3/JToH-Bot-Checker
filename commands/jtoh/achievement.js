@@ -5,7 +5,7 @@ const {
   ApplicationIntegrationType,
   InteractionContextType,
 } = require("discord.js");
-const { createCanvas, registerFont } = require("@napi-rs/canvas");
+const { createCanvas, GlobalFonts } = require("@napi-rs/canvas");
 const Chart = require("chart.js/auto");
 const path = require("path");
 const {
@@ -16,9 +16,7 @@ const {
   difficultyColors,
 } = require("../../models/utils");
 
-registerFont(path.join(__dirname, "../../fonts/OpenSans-Regular.ttf"), {
-  family: "Open Sans",
-});
+GlobalFonts.registerFromPath(path.join(__dirname, "../../fonts/OpenSans-Regular.ttf"), "Open Sans");
 
 module.exports = {
   data: new SlashCommandBuilder()
