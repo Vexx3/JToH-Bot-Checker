@@ -16,7 +16,10 @@ const {
   difficultyColors,
 } = require("../../models/utils");
 
-GlobalFonts.registerFromPath(path.join(__dirname, "../../fonts/OpenSans-Regular.ttf"), "Open Sans");
+GlobalFonts.registerFromPath(
+  path.join(__dirname, "../../fonts/OpenSans-Regular.ttf"),
+  "Open Sans"
+);
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -149,6 +152,10 @@ module.exports = {
                 family: "Open Sans",
               },
             },
+            grid: {
+              color: "rgba(255, 255, 255, 0.2)",
+              lineWidth: 1,
+            },
           },
           x: {
             stacked: true,
@@ -158,6 +165,8 @@ module.exports = {
                 size: 14,
                 family: "Open Sans",
               },
+              maxRotation: 90,
+              minRotation: 90,
             },
             title: {
               display: true,
@@ -167,6 +176,10 @@ module.exports = {
                 size: 14,
                 family: "Open Sans",
               },
+            },
+            grid: {
+              color: "rgba(255, 255, 255, 0.2)",
+              lineWidth: 1,
             },
           },
         },
