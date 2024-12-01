@@ -5,8 +5,9 @@ const {
   ApplicationIntegrationType,
   InteractionContextType,
 } = require("discord.js");
-const { createCanvas } = require("@napi-rs/canvas");
+const { createCanvas, registerFont } = require("@napi-rs/canvas");
 const Chart = require("chart.js/auto");
+const path = require("path");
 const {
   fetchRobloxId,
   fetchRobloxAvatar,
@@ -14,6 +15,10 @@ const {
   fetchJToHBadges,
   difficultyColors,
 } = require("../../models/utils");
+
+registerFont(path.join(__dirname, "../../fonts/OpenSans-Regular.ttf"), {
+  family: "Open Sans",
+});
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -99,8 +104,8 @@ module.exports = {
       });
     }
 
-    const width = 1000;
-    const height = 800;
+    const width = 800;
+    const height = 600;
     const canvas = createCanvas(width, height);
     const ctx = canvas.getContext("2d");
 
@@ -122,6 +127,7 @@ module.exports = {
             color: "#ffffff",
             font: {
               size: 14,
+              family: "Open Sans",
             },
           },
         },
@@ -133,6 +139,7 @@ module.exports = {
               color: "#ffffff",
               font: {
                 size: 14,
+                family: "Open Sans",
               },
             },
             title: {
@@ -141,6 +148,7 @@ module.exports = {
               color: "#ffffff",
               font: {
                 size: 14,
+                family: "Open Sans",
               },
             },
           },
@@ -150,6 +158,16 @@ module.exports = {
               color: "#ffffff",
               font: {
                 size: 14,
+                family: "Open Sans",
+              },
+            },
+            title: {
+              display: true,
+              text: "Date",
+              color: "#ffffff",
+              font: {
+                size: 14,
+                family: "Open Sans",
               },
             },
           },
