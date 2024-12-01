@@ -1,5 +1,4 @@
 const { request } = require("undici");
-const { promisify } = require("util");
 const redisClient = require("./redis");
 require("dotenv").config();
 
