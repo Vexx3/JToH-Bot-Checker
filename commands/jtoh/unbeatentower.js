@@ -53,9 +53,7 @@ module.exports = {
     }
 
     const avatarUrl = await fetchRobloxAvatar(robloxId);
-    const jtohBadges = await fetchJToHBadges(robloxId);
-    const badgeIds = jtohBadges.map((badge) => badge.id);
-    const awardedTowers = await fetchAwardedDates(robloxId, badgeIds);
+    const awardedTowers = await fetchAwardedDates(robloxId);
 
     if (!awardedTowers?.length) {
       return interaction.editReply(

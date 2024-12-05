@@ -182,9 +182,9 @@ async function fetchJToHBadges() {
   return allBadges;
 }
 
-const RATE_LIMIT_DELAY = 15000;
+const RATE_LIMIT_DELAY = 10000;
 
-async function fetchAwardedDates(userId, badgeIds) {
+async function fetchAwardedDates(userId) {
   const cacheKey = `awardedDates_${userId}`;
   const cachedData = await redisClient.get(cacheKey);
 
@@ -192,6 +192,10 @@ async function fetchAwardedDates(userId, badgeIds) {
     return JSON.parse(cachedData);
   }
 
+  const jtohBadges = await fetchBadgeInfo();
+  const badgeIds = jtohBadges
+    .flatMap((badge) => [badge.ktohBadgeId, badge.oldBadgeId, badge.badgeId])
+    .filter(Boolean);
   const batches = chunkArray(badgeIds, 100);
 
   const fetchBatchData = async (batch) => {
@@ -238,7 +242,6 @@ async function fetchAwardedDates(userId, badgeIds) {
     allAwardedDates.push(...(batchData || []));
   }
 
-  const jtohBadges = await fetchBadgeInfo();
   const towerDifficultyData = await fetchTowerDifficultyData();
 
   const uniqueBadges = new Set();
@@ -247,7 +250,8 @@ async function fetchAwardedDates(userId, badgeIds) {
       const matchedJToHBadge = jtohBadges.find(
         (jtohBadge) =>
           jtohBadge.oldBadgeId === awarded.badgeId ||
-          jtohBadge.badgeId === awarded.badgeId
+          jtohBadge.badgeId === awarded.badgeId ||
+          jtohBadge.ktohBadgeId === awarded.badgeId
       );
 
       if (matchedJToHBadge && matchedJToHBadge.category === "Beating Tower") {
