@@ -1,4 +1,9 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+const {
+  SlashCommandBuilder,
+  EmbedBuilder,
+  ApplicationIntegrationType,
+  InteractionContextType,
+} = require("discord.js");
 const {
   fetchRobloxId,
   fetchBadgeInfo,
@@ -21,7 +26,16 @@ module.exports = {
     )
     .addStringOption((option) =>
       option.setName("tower").setDescription("Tower acronym").setRequired(true)
-    ),
+    )
+    .setIntegrationTypes([
+      ApplicationIntegrationType.GuildInstall,
+      ApplicationIntegrationType.UserInstall,
+    ])
+    .setContexts([
+      InteractionContextType.Guild,
+      InteractionContextType.BotDM,
+      InteractionContextType.PrivateChannel,
+    ]),
   async execute(interaction) {
     await interaction.deferReply();
 
