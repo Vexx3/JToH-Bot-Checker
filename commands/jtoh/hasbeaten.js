@@ -37,10 +37,12 @@ module.exports = {
     const badgeInfo = await fetchBadgeInfo();
     const towerDifficultyData = await fetchTowerDifficultyData();
 
-    const towerBadge = badgeInfo.find(
+    const beatingTowerBadges = badgeInfo.filter(
+      (badge) => badge.category === "Beating Tower"
+    );
+    const towerBadge = beatingTowerBadges.find(
       (badge) => badge.acronym.toLowerCase() === towerAcronym.toLowerCase()
     );
-
     const towerData = towerDifficultyData.find(
       (tower) => tower.acronym.toLowerCase() === towerAcronym.toLowerCase()
     );
