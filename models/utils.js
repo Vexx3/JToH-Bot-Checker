@@ -129,6 +129,30 @@ async function fetchRobloxUserInfo(robloxId) {
   }
 }
 
+async function fetchAwardedDateForBadge(userId, badgeIds) {
+  for (const badgeId of badgeIds) {
+    try {
+      const response = await request(
+        `https://badges.roblox.com/v1/users/${userId}/badges/${badgeId}/awarded-date`
+      );
+
+      if (response.statusCode === 200) {
+        const data = await response.body.json();
+        if (data.awardedDate) {
+          return data;
+        }
+      } else {
+        console.error(
+          `Failed to fetch awarded date for badge ${badgeId}: ${response.statusCode} - ${await response.body.text()}`
+        );
+      }
+    } catch (error) {
+      console.error(`Error in fetchAwardedDateForBadge for badge ${badgeId}:`, error);
+    }
+  }
+  return null;
+}
+
 const RATE_LIMIT_DELAY = 10000;
 
 async function fetchAwardedDates(userId) {
@@ -140,7 +164,9 @@ async function fetchAwardedDates(userId) {
   }
 
   const jtohBadges = await fetchBadgeInfo();
-  const beatingTowerBadges = jtohBadges.filter(badge => badge.category === "Beating Tower");
+  const beatingTowerBadges = jtohBadges.filter(
+    (badge) => badge.category === "Beating Tower"
+  );
   const badgeIds = beatingTowerBadges
     .flatMap((badge) => [badge.ktohBadgeId, badge.oldBadgeId, badge.badgeId])
     .filter(Boolean);
@@ -333,4 +359,5 @@ module.exports = {
   fetchBadgeInfo,
   fetchTowerDifficultyData,
   fetchAreaData,
+  fetchAwardedDateForBadge,
 };
