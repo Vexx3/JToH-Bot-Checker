@@ -12,7 +12,6 @@ const {
   fetchRobloxId,
   fetchRobloxAvatar,
   fetchAwardedDates,
-  fetchJToHBadges,
   difficultyColors,
 } = require("../../models/utils");
 

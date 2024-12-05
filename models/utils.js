@@ -129,59 +129,6 @@ async function fetchRobloxUserInfo(robloxId) {
   }
 }
 
-async function fetchJToHBadges() {
-  const universeIds = [1055653882, 3264581003];
-  let allBadges = [];
-  const maxRetries = 5;
-
-  for (const universeId of universeIds) {
-    let nextCursor = null;
-
-    do {
-      let attempts = 0;
-      let badgesData = null;
-
-      while (attempts < maxRetries) {
-        try {
-          const badgesResponse = await request(
-            `https://badges.roblox.com/v1/universes/${universeId}/badges`,
-            {
-              method: "GET",
-              query: { limit: 100, cursor: nextCursor, sortOrder: "Asc" },
-            }
-          );
-
-          if (badgesResponse.statusCode !== 200) {
-            console.error(
-              `Error fetching JToH badges for universe ${universeId} (Attempt ${
-                attempts + 1
-              }): ${badgesResponse.statusCode}`
-            );
-          } else {
-            badgesData = await badgesResponse.body.json();
-            const badges = badgesData.data.map((badge) => ({
-              id: badge.id,
-              name: badge.name,
-            }));
-            allBadges = allBadges.concat(badges);
-            nextCursor = badgesData.nextPageCursor;
-            break;
-          }
-        } catch (error) {
-          console.error(
-            `Error in fetchJToHBadges for universe ${universeId}:`,
-            error
-          );
-        }
-
-        attempts++;
-      }
-    } while (nextCursor);
-  }
-
-  return allBadges;
-}
-
 const RATE_LIMIT_DELAY = 10000;
 
 async function fetchAwardedDates(userId) {
@@ -382,10 +329,8 @@ module.exports = {
   fetchRobloxUserInfo,
   fetchRobloxId,
   fetchRobloxAvatar,
-  fetchJToHBadges,
   fetchAwardedDates,
   fetchBadgeInfo,
   fetchTowerDifficultyData,
   fetchAreaData,
-  getTowerAcronym,
 };

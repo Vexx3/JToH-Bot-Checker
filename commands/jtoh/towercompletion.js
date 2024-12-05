@@ -10,7 +10,6 @@ const {
   difficultyEmojis,
   fetchRobloxAvatar,
   fetchRobloxId,
-  fetchJToHBadges,
   fetchTowerDifficultyData,
   fetchBadgeInfo,
   fetchAwardedDates,

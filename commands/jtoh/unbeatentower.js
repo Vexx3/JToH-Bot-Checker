@@ -14,7 +14,6 @@ const {
   difficultyEmojis,
   fetchRobloxAvatar,
   fetchRobloxId,
-  fetchJToHBadges,
   fetchTowerDifficultyData,
   fetchAreaData,
   fetchBadgeInfo,

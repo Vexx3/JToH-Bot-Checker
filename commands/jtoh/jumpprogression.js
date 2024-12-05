@@ -9,7 +9,6 @@ const {
   difficultyEmojis,
   fetchRobloxAvatar,
   fetchRobloxId,
-  fetchJToHBadges,
   fetchAwardedDates,
 } = require("../../models/utils");
 
