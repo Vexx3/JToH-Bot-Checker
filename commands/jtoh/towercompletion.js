@@ -49,6 +49,10 @@ module.exports = {
     const avatarUrl = await fetchRobloxAvatar(robloxId);
     const awardedTowers = await fetchAwardedDates(robloxId);
 
+    const filteredAwardedTowers = awardedTowers.filter(
+      (badge) => badge.towerType !== "MiniTower"
+    );
+
     if (!awardedTowers?.length) {
       return interaction.editReply(
         `No JToH tower badges found for **${username}**.`
@@ -96,7 +100,7 @@ module.exports = {
 
     const difficultyCounts = {};
 
-    awardedTowers.forEach((badge) => {
+    filteredAwardedTowers.forEach((badge) => {
       const points =
         badge.towerType === "Citadel"
           ? 2
