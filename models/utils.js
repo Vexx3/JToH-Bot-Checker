@@ -193,7 +193,8 @@ async function fetchAwardedDates(userId) {
   }
 
   const jtohBadges = await fetchBadgeInfo();
-  const badgeIds = jtohBadges
+  const beatingTowerBadges = jtohBadges.filter(badge => badge.category === "Beating Tower");
+  const badgeIds = beatingTowerBadges
     .flatMap((badge) => [badge.ktohBadgeId, badge.oldBadgeId, badge.badgeId])
     .filter(Boolean);
   const batches = chunkArray(badgeIds, 100);
@@ -247,14 +248,14 @@ async function fetchAwardedDates(userId) {
   const uniqueBadges = new Set();
   const filteredBadges = allAwardedDates
     .map((awarded) => {
-      const matchedJToHBadge = jtohBadges.find(
+      const matchedJToHBadge = badgeIds.find(
         (jtohBadge) =>
+          jtohBadge.ktohBadgeId === awarded.badgeId ||
           jtohBadge.oldBadgeId === awarded.badgeId ||
-          jtohBadge.badgeId === awarded.badgeId ||
-          jtohBadge.ktohBadgeId === awarded.badgeId
+          jtohBadge.badgeId === awarded.badgeId
       );
 
-      if (matchedJToHBadge && matchedJToHBadge.category === "Beating Tower") {
+      if (matchedJToHBadge) {
         const towerData = towerDifficultyData.find(
           (tower) => tower.acronym === matchedJToHBadge.acronym
         );
@@ -364,12 +365,6 @@ async function fetchAreaData() {
     console.error("Error fetching area difficulty data:", error);
     return [];
   }
-}
-
-function getTowerAcronym(towerName) {
-  const words = towerName.split(" ");
-  const acronym = words.map((word) => word.charAt(0)).join("");
-  return acronym;
 }
 
 function chunkArray(array, chunkSize) {
