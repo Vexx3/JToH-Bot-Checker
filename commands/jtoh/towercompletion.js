@@ -61,7 +61,8 @@ module.exports = {
     const totalDifficultyCounts = {};
 
     const filteredTowerData = towerData.filter(
-      (tower) => tower.locationType !== "event"
+      (tower) =>
+        tower.locationType !== "event" && tower.towerType !== "MiniTower"
     );
 
     badgeInfo
@@ -77,22 +78,15 @@ module.exports = {
         }
       });
 
-    const totalTowersInGame = badgeInfo.filter(
-      (badge) =>
-        badge.category === "Beating Tower" &&
-        filteredTowerData.some(
-          (t) =>
-            t.acronym === badge.acronym &&
-            t.difficultyName &&
-            t.towerType !== "MiniTower"
-        )
-    ).length;
+    const totalTowersInGame = Object.values(totalDifficultyCounts).reduce(
+      (sum, count) => sum + count,
+      0
+    );
 
     const towerCounts = {
       towers: 0,
       citadels: 0,
       steeples: 0,
-      minitowers: 0,
     };
 
     const locationPoints = {
@@ -112,12 +106,10 @@ module.exports = {
 
       towerCounts[`${badge.towerType.toLowerCase()}s`] += 1;
 
-      if (badge.towerType !== "MiniTower") {
-        if (badge.location === "ring") {
-          locationPoints.Ring += points;
-        } else if (badge.location === "zone") {
-          locationPoints.Zone += points;
-        }
+      if (badge.location === "ring") {
+        locationPoints.Ring += points;
+      } else if (badge.location === "zone") {
+        locationPoints.Zone += points;
       }
 
       if (!difficultyCounts[badge.difficultyName]) {
@@ -162,7 +154,7 @@ module.exports = {
         },
         {
           name: "Tower type",
-          value: `Towers: ${towerCounts.towers}\nCitadels: ${towerCounts.citadels}\nSteeples: ${towerCounts.steeples}\nMini Towers: ${towerCounts.minitowers}`,
+          value: `Towers: ${towerCounts.towers}\nCitadels: ${towerCounts.citadels}\nSteeples: ${towerCounts.steeples}`,
         },
         {
           name: "Difficulty",
