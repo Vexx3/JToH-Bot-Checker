@@ -195,7 +195,7 @@ async function fetchAwardedDates(userId) {
   const uniqueBadges = new Set();
   const filteredBadges = allAwardedDates
     .map((awarded) => {
-      const matchedJToHBadge = badgeIds.find(
+      const matchedJToHBadge = beatingTowerBadges.find(
         (jtohBadge) =>
           jtohBadge.ktohBadgeId === awarded.badgeId ||
           jtohBadge.oldBadgeId === awarded.badgeId ||
