@@ -89,38 +89,31 @@ module.exports = {
       const easiestDifficulty = towers[0]?.difficultyName;
       const embedColor = difficultyColors[easiestDifficulty] || "#99AAb5";
       return new EmbedBuilder()
-        .setTitle("The top 10 easiest unbeaten tower(s)")
+        .setTitle(`The top 10 easiest unbeaten tower(s) for ${username}`)
         .setColor(embedColor)
         .setThumbnail(avatarUrl)
-        .addFields(
-          {
-            name: "Player",
-            value: username,
-            inline: true,
-          },
-          {
-            name: "List of tower",
-            value:
-              towers.length === 0
-                ? `**${username}** has beaten all towers in JToH!`
-                : towers
-                    .map((tower) => {
-                      const matchedArea = areaData.find(
-                        (currentArea) => currentArea.acronym === tower.areaCode
-                      );
-                      const areaName = matchedArea
-                        ? matchedArea.areaName
-                        : "Unknown Area";
+        .addFields({
+          name: "List of tower",
+          value:
+            towers.length === 0
+              ? `**${username}** has beaten all towers in JToH! <a:yep:1310264052202868797>`
+              : towers
+                  .map((tower) => {
+                    const matchedArea = areaData.find(
+                      (currentArea) => currentArea.acronym === tower.areaCode
+                    );
+                    const areaName = matchedArea
+                      ? matchedArea.areaName
+                      : "Unknown Area";
 
-                      return `**[${
-                        difficultyEmojis[tower.difficultyName] || ""
-                      }]** ${tower.acronym} (${
-                        tower.numDifficulty
-                      }) - ${areaName}`;
-                    })
-                    .join("\n"),
-          }
-        );
+                    return `**[${
+                      difficultyEmojis[tower.difficultyName] || ""
+                    }]** ${tower.acronym} (${
+                      tower.numDifficulty
+                    }) - ${areaName}`;
+                  })
+                  .join("\n"),
+        });
     };
 
     const embed = createEmbed(topTowers);

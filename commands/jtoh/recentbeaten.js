@@ -60,29 +60,22 @@ module.exports = {
     const hardestTowerDifficulty = top10RecentTowers[0]?.difficultyName;
     const embedColor = difficultyColors[hardestTowerDifficulty];
     const embed = new EmbedBuilder()
-      .setTitle("The top 10 most recent tower(s)")
+      .setTitle(`The top 10 most recent tower(s) for ${username}`)
       .setColor(embedColor)
       .setThumbnail(avatarUrl)
-      .addFields(
-        {
-          name: "Player",
-          value: username,
-          inline: true,
-        },
-        {
-          name: "List of tower",
-          value: top10RecentTowers
-            .map(
-              (tower) =>
-                `**[${difficultyEmojis[tower.difficultyName] || ""}]** ${
-                  tower.acronym
-                } (${tower.numDifficulty}) - <t:${Math.floor(
-                  new Date(tower.awardedDate).getTime() / 1000
-                )}:R>`
-            )
-            .join("\n"),
-        }
-      );
+      .addFields({
+        name: "List of tower",
+        value: top10RecentTowers
+          .map(
+            (tower) =>
+              `**[${difficultyEmojis[tower.difficultyName] || ""}]** ${
+                tower.acronym
+              } (${tower.numDifficulty}) - <t:${Math.floor(
+                new Date(tower.awardedDate).getTime() / 1000
+              )}:R>`
+          )
+          .join("\n"),
+      });
 
     return interaction.editReply({ embeds: [embed] });
   },

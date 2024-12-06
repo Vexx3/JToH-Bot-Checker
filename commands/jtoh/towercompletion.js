@@ -143,11 +143,10 @@ module.exports = {
       .join("\n");
 
     const embed = new EmbedBuilder()
-      .setTitle("Tower completion")
+      .setTitle(`Tower completion of ${username}`)
       .setColor("#58b9ff")
       .setThumbnail(avatarUrl)
       .addFields(
-        { name: "Player", value: username, inline: true },
         {
           name: "Total completion",
           value: `${totalTowersCompleted}/${totalTowersInGame} (${totalCompletionPercentage}%)`,

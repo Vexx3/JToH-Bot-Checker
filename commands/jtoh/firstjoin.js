@@ -61,8 +61,8 @@ module.exports = {
     }
 
     const embed = new EmbedBuilder()
-      .setTitle(`First Join Date of ${username}`)
-      .setColor("#99AAb5")
+      .setTitle(`JToH joining date of ${username}`)
+      .setColor("#58b9ff")
       .setThumbnail(avatarUrl)
       .addFields({
         name: "Date",
