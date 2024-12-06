@@ -79,14 +79,10 @@ module.exports = {
     const difficultyEmoji = difficultyEmojis[difficultyLevel] || ":question:";
 
     const embed = new EmbedBuilder()
-      .setTitle(`Completion status of player`)
+      .setTitle(`Completion status of ${username}`)
       .setColor(embedColor)
       .setThumbnail(avatarUrl)
       .addFields(
-        {
-          name: "Player",
-          value: username,
-        },
         {
           name: "Tower",
           value: `**[${difficultyEmoji}]** ${towerData.name}`,
