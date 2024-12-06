@@ -60,7 +60,7 @@ module.exports = {
     const significantProgression = [];
 
     for (const tower of awardedTowers) {
-      if (highestDiffiulty === undefined || tower.numDifficulty > highestDifficulty) {
+      if (highestDifficulty === undefined || tower.numDifficulty > highestDifficulty) {
         highestDifficulty = tower.numDifficulty;
         significantProgression.push(tower);
       }
