@@ -68,7 +68,7 @@ module.exports = {
         name: "Date",
         value: `<t:${Math.floor(
           new Date(awardedDate.awardedDate).getTime() / 1000
-        )}:F>`,
+        )}:f>`,
       });
 
     await interaction.editReply({ embeds: [embed] });
