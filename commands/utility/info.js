@@ -27,17 +27,12 @@ module.exports = {
       .then((app) => app.approximateUserInstallCount);
 
     const embed = new EmbedBuilder()
-      .setTitle("Bot Information")
+      .setTitle(interaction.client.user.username)
       .setColor("#58b9ff")
       .setDescription(
         "A bot that provides various commands to interact with JToH game data, including checking tower completions, achievements, and more."
       )
       .addFields(
-        {
-          name: "Bot Name",
-          value: interaction.client.user.username,
-          inline: true,
-        },
         {
           name: "Servers",
           value: interaction.client.guilds.cache.size.toString(),
