@@ -59,80 +59,59 @@ const difficultyEmojis = {
   epic: "<:epic:1309384795318648923>",
 };
 
-const RATE_LIMIT_DELAY = 5000;
-const MAX_RETRIES = 5;
-
-async function fetchWithRetry(url, options, maxRetries = MAX_RETRIES) {
-  let attempts = 0;
-  while (attempts < maxRetries) {
-    try {
-      const response = await request(url, options);
-      if (response.statusCode === 200) {
-        return response;
-      } else if (response.statusCode === 429) {
-        await new Promise((resolve) => setTimeout(resolve, RATE_LIMIT_DELAY));
-      } else {
-        console.error(
-          `Unexpected error (Attempt ${attempts + 1}): ${response.statusCode}`
-        );
-      }
-    } catch (error) {
-      console.error(
-        `Request failed (Attempt ${attempts + 1}): ${error.message}`
-      );
-    }
-    attempts++;
-    await new Promise((resolve) => setTimeout(resolve, RATE_LIMIT_DELAY));
-  }
-  throw new Error("Failed to fetch data after multiple attempts.");
-}
-
 async function fetchRobloxAvatar(robloxId) {
-  const url = "https://thumbnails.roproxy.com/v1/users/avatar-bust";
-  const options = {
-    method: "GET",
-    query: {
-      userIds: robloxId,
-      size: "60x60",
-      format: "Png",
-      isCircular: false,
-    },
-  };
+  const avatarResponse = await request(
+    "https://thumbnails.roproxy.com/v1/users/avatar-bust",
+    {
+      method: "GET",
+      query: {
+        userIds: robloxId,
+        size: "60x60",
+        format: "Png",
+        isCircular: false,
+      },
+    }
+  );
 
   const avatarUrl =
     "https://static.wikia.nocookie.net/roblox/images/a/a4/Image666.png";
-  const response = await fetchWithRetry(url, options);
-
-  if (response) {
-    const avatarData = await response.body.json();
+  if (avatarResponse.statusCode === 200) {
+    const avatarData = await avatarResponse.body.json();
     if (avatarData.data && avatarData.data.length > 0) {
       return avatarData.data[0].imageUrl || avatarUrl;
     }
+  } else {
+    console.error(
+      `Failed to fetch avatar image: ${
+        avatarResponse.statusCode
+      } - ${await avatarResponse.body.text()}`
+    );
   }
 
   return avatarUrl;
 }
 
 async function fetchRobloxId(username) {
-  const url = "https://users.roproxy.com/v1/usernames/users";
-  const options = {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ usernames: [username] }),
-  };
-
-  const response = await fetchWithRetry(url, options);
+  const response = await request(
+    "https://users.roproxy.com/v1/usernames/users",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ usernames: [username] }),
+    }
+  );
   const data = await response.body.json();
   return data.data?.[0] ? data.data[0].id : null;
 }
 
 async function fetchRobloxUserInfo(robloxId) {
   try {
-    const url = `https://users.roproxy.com/v1/users/${robloxId}`;
-    const response = await fetchWithRetry(url, { method: "GET" });
+    const userResponse = await request(
+      `https://users.roproxy.com/v1/users/${robloxId}`
+    );
 
-    if (response) {
-      const userData = await response.body.json();
+    if (userResponse.statusCode === 200) {
+      const userData = await userResponse.body.json();
       return {
         id: userData.id,
         name: userData.name,
@@ -140,6 +119,9 @@ async function fetchRobloxUserInfo(robloxId) {
         created: userData.created,
         description: userData.description || "No description",
       };
+    } else {
+      console.error(`Failed to fetch user info: ${userResponse.statusCode}`);
+      throw new Error("Error fetching Roblox user information.");
     }
   } catch (error) {
     console.error("Error in fetchRobloxUserInfo:", error);
@@ -150,24 +132,28 @@ async function fetchRobloxUserInfo(robloxId) {
 async function fetchAwardedDateForBadge(userId, badgeIds) {
   for (const badgeId of badgeIds) {
     try {
-      const url = `https://badges.roproxy.com/v1/users/${userId}/badges/${badgeId}/awarded-date`;
-      const response = await fetchWithRetry(url, { method: "GET" });
+      const response = await request(
+        `https://badges.roproxy.com/v1/users/${userId}/badges/${badgeId}/awarded-date`
+      );
 
-      if (response) {
+      if (response.statusCode === 200) {
         const data = await response.body.json();
         if (data.awardedDate) {
           return data;
         }
+      } else {
+        console.error(
+          `Failed to fetch awarded date for badge ${badgeId}: ${response.statusCode} - ${await response.body.text()}`
+        );
       }
     } catch (error) {
-      console.error(
-        `Error in fetchAwardedDateForBadge for badge ${badgeId}:`,
-        error
-      );
+      console.error(`Error in fetchAwardedDateForBadge for badge ${badgeId}:`, error);
     }
   }
   return null;
 }
+
+const RATE_LIMIT_DELAY = 10000;
 
 async function fetchAwardedDates(userId) {
   const cacheKey = `awardedDates_${userId}`;
@@ -187,10 +173,41 @@ async function fetchAwardedDates(userId) {
   const batches = chunkArray(badgeIds, 100);
 
   const fetchBatchData = async (batch) => {
-    const url = `https://badges.roproxy.com/v1/users/${userId}/badges/awarded-dates`;
-    const options = { method: "GET", query: { badgeIds: batch.join(",") } };
-    const response = await fetchWithRetry(url, options);
-    return response ? await response.body.json().data : [];
+    let attempts = 0;
+    const maxRetries = 5;
+
+    while (attempts < maxRetries) {
+      try {
+        const awardedDatesResponse = await request(
+          `https://badges.roproxy.com/v1/users/${userId}/badges/awarded-dates`,
+          { method: "GET", query: { badgeIds: batch.join(",") } }
+        );
+
+        if (awardedDatesResponse.statusCode === 200) {
+          const awardedDatesData = await awardedDatesResponse.body.json();
+          return awardedDatesData.data;
+        }
+
+        if (awardedDatesResponse.statusCode === 429) {
+          await new Promise((resolve) => setTimeout(resolve, RATE_LIMIT_DELAY));
+        } else {
+          console.error(
+            `Unexpected error (Attempt ${attempts + 1}): ${
+              awardedDatesResponse.statusCode
+            }`
+          );
+        }
+      } catch (error) {
+        console.error(
+          `Request failed (Attempt ${attempts + 1}): ${error.message}`
+        );
+      }
+
+      attempts++;
+      await new Promise((resolve) => setTimeout(resolve, RATE_LIMIT_DELAY));
+    }
+
+    throw new Error("Failed to fetch awarded dates after multiple attempts.");
   };
 
   const allAwardedDates = [];
