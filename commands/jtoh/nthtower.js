@@ -79,7 +79,7 @@ module.exports = {
       .addFields(
         {
           name: "No.",
-          value: nth,
+          value: nth.toString(),
         },
         {
           name: "Tower",
