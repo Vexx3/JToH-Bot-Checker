@@ -61,7 +61,7 @@ const difficultyEmojis = {
 
 async function fetchRobloxAvatar(robloxId) {
   const avatarResponse = await request(
-    "https://roproxy-production-f193.up.railway.app/thumbnails/v1/users/avatar-bust",
+    "https://thumbnails.roproxy.com/v1/users/avatar-bust",
     {
       method: "GET",
       query: {
@@ -93,7 +93,7 @@ async function fetchRobloxAvatar(robloxId) {
 
 async function fetchRobloxId(username) {
   const response = await request(
-    "https://roproxy-production-f193.up.railway.app/users/v1/usernames/users",
+    "https://users.roproxy.com/v1/usernames/users",
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -107,7 +107,7 @@ async function fetchRobloxId(username) {
 async function fetchRobloxUserInfo(robloxId) {
   try {
     const userResponse = await request(
-      `https://roproxy-production-f193.up.railway.app/users/v1/users/${robloxId}`
+      `https://users.roproxy.com/v1/users/${robloxId}`
     );
 
     if (userResponse.statusCode === 200) {
@@ -133,7 +133,7 @@ async function fetchAwardedDateForBadge(userId, badgeIds) {
   for (const badgeId of badgeIds) {
     try {
       const response = await request(
-        `https://roproxy-production-f193.up.railway.app/badges/v1/users/${userId}/badges/${badgeId}/awarded-date`
+        `https://badges.roproxy.com/v1/users/${userId}/badges/${badgeId}/awarded-date`
       );
 
       if (response.statusCode === 200) {
@@ -179,7 +179,7 @@ async function fetchAwardedDates(userId) {
     while (attempts < maxRetries) {
       try {
         const awardedDatesResponse = await request(
-          `https://roproxy-production-f193.up.railway.app/badges/v1/users/${userId}/badges/awarded-dates`,
+          `https://badges.roproxy.com/v1/users/${userId}/badges/awarded-dates`,
           { method: "GET", query: { badgeIds: batch.join(",") } }
         );
 
