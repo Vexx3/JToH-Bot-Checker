@@ -69,7 +69,9 @@ module.exports = {
         badge.category === "Beating Tower" &&
         !awardedTowers.some(
           (userBadge) =>
-            userBadge.id === badge.oldBadgeId || userBadge.id === badge.badgeId
+            userBadge.id === badge.ktohBadgeId ||
+            userBadge.id === badge.oldBadgeId ||
+            userBadge.id === badge.badgeId
         )
       );
     });
