@@ -91,7 +91,7 @@ module.exports = {
       const easiestDifficulty = towers[0]?.difficultyName;
       const embedColor = difficultyColors[easiestDifficulty] || "#99AAb5";
       return new EmbedBuilder()
-        .setTitle(`The top 10 easiest unbeaten tower(s) for ${username}`)
+        .setTitle(`10 easiest unbeaten tower(s) for ${username}`)
         .setColor(embedColor)
         .setThumbnail(avatarUrl)
         .addFields({

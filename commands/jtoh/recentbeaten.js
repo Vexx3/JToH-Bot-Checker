@@ -60,7 +60,7 @@ module.exports = {
     const hardestTowerDifficulty = top10RecentTowers[0]?.difficultyName;
     const embedColor = difficultyColors[hardestTowerDifficulty];
     const embed = new EmbedBuilder()
-      .setTitle(`The top 10 most recent tower(s) for ${username}`)
+      .setTitle(`10 most recent tower(s) for ${username}`)
       .setColor(embedColor)
       .setThumbnail(avatarUrl)
       .addFields({
