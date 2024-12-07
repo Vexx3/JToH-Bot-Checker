@@ -88,7 +88,7 @@ async function fetchWithRetry(url, options, maxRetries = MAX_RETRIES) {
 }
 
 async function fetchRobloxAvatar(robloxId) {
-  const url = "https://thumbnails.roproxy.com/v1/users/avatar-bust";
+  const url = "https://thumbnails.roblox.com/v1/users/avatar-bust";
   const options = {
     method: "GET",
     query: {
@@ -114,7 +114,7 @@ async function fetchRobloxAvatar(robloxId) {
 }
 
 async function fetchRobloxId(username) {
-  const url = "https://users.roproxy.com/v1/usernames/users";
+  const url = "https://users.roblox.com/v1/usernames/users";
   const options = {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -128,7 +128,7 @@ async function fetchRobloxId(username) {
 
 async function fetchRobloxUserInfo(robloxId) {
   try {
-    const url = `https://users.roproxy.com/v1/users/${robloxId}`;
+    const url = `https://users.roblox.com/v1/users/${robloxId}`;
     const response = await fetchWithRetry(url, { method: "GET" });
 
     if (response) {
@@ -150,7 +150,7 @@ async function fetchRobloxUserInfo(robloxId) {
 async function fetchAwardedDateForBadge(userId, badgeIds) {
   for (const badgeId of badgeIds) {
     try {
-      const url = `https://badges.roproxy.com/v1/users/${userId}/badges/${badgeId}/awarded-date`;
+      const url = `https://badges.roblox.com/v1/users/${userId}/badges/${badgeId}/awarded-date`;
       const response = await fetchWithRetry(url, { method: "GET" });
 
       if (response) {
@@ -187,7 +187,7 @@ async function fetchAwardedDates(userId) {
   const batches = chunkArray(badgeIds, 100);
 
   const fetchBatchData = async (batch) => {
-    const url = `https://badges.roproxy.com/v1/users/${userId}/badges/awarded-dates`;
+    const url = `https://badges.roblox.com/v1/users/${userId}/badges/awarded-dates`;
     const options = { method: "GET", query: { badgeIds: batch.join(",") } };
     const response = await fetchWithRetry(url, options);
     return response ? await response.body.json().data : [];
