@@ -89,7 +89,7 @@ module.exports = {
           name: "Date beaten",
           value: `<t:${Math.floor(
             new Date(nthTower.awardedDate).getTime() / 1000
-          )}:F>`,
+          )}:f>`,
         }
       );
 
