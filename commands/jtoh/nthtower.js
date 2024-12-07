@@ -12,6 +12,12 @@ const {
   difficultyEmojis,
 } = require("../../models/utils");
 
+function getOrdinalSuffix(n) {
+  const s = ["th", "st", "nd", "rd"];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("nthtower")
@@ -73,12 +79,12 @@ module.exports = {
       difficultyEmojis[nthTower.difficultyName] || ":question:";
 
     const embed = new EmbedBuilder()
-      .setTitle(`The ${nth}th tower beaten by ${username}`)
+      .setTitle(`The ${getOrdinalSuffix(nth)} tower beaten by ${username}`)
       .setColor(embedColor)
       .setThumbnail(avatarUrl)
       .addFields(
         {
-          name: "No.",
+          name: "No:",
           value: nth.toString(),
         },
         {

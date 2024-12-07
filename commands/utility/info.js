@@ -55,6 +55,11 @@ module.exports = {
           inline: true,
         },
         {
+          name: "Contributor",
+          value: "CRP Land for JToH datas.",
+          inline: true,
+        },
+        {
           name: "Library",
           value: "[discord.js](https://discord.js.org/)",
           inline: true,
