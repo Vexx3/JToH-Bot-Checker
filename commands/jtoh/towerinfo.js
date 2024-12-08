@@ -9,7 +9,6 @@ const cheerio = require("cheerio");
 const { difficultyColors } = require("../../models/utils");
 
 module.exports = {
-  cooldown: 5,
   data: new SlashCommandBuilder()
     .setName("towerinfo")
     .setDescription("Get information about a specific JToH Tower.")

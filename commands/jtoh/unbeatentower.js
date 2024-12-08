@@ -21,7 +21,6 @@ const {
 } = require("../../models/utils");
 
 module.exports = {
-  cooldown: 20,
   data: new SlashCommandBuilder()
     .setName("unbeatentower")
     .setDescription("Check the easiest unbeaten towers by a user in JToH")

@@ -13,7 +13,6 @@ const {
 } = require("../../models/utils");
 
 module.exports = {
-  cooldown: 20,
   data: new SlashCommandBuilder()
     .setName("recentbeaten")
     .setDescription("Check the most recent towers beaten by a user in JToH")

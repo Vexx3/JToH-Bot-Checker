@@ -16,7 +16,6 @@ const {
 } = require("../../models/utils");
 
 module.exports = {
-  cooldown: 20,
   data: new SlashCommandBuilder()
     .setName("towercompletion")
     .setDescription("Displays the tower completion stats for a user in JToH")

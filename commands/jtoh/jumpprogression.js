@@ -13,7 +13,6 @@ const {
 } = require("../../models/utils");
 
 module.exports = {
-  cooldown: 20,
   data: new SlashCommandBuilder()
     .setName("jumpprogression")
     .setDescription("Check the jump progression by a user in JToH")
