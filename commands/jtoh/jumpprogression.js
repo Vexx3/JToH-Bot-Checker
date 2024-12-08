@@ -56,11 +56,11 @@ module.exports = {
       (a, b) => new Date(a.awardedDate) - new Date(b.awardedDate)
     );
 
-    let highestDifficulty;
+    let highestDifficulty = null;
     const significantProgression = [];
 
     for (const tower of awardedTowers) {
-      if (highestDifficulty === undefined || tower.numDifficulty > highestDifficulty) {
+      if (highestDifficulty === null || tower.numDifficulty > highestDifficulty) {
         highestDifficulty = tower.numDifficulty;
         significantProgression.push(tower);
       }
