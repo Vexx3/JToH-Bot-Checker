@@ -66,7 +66,7 @@ async function fetchRobloxAvatar(robloxId) {
       method: "GET",
       query: {
         userIds: robloxId,
-        size: "100x100",
+        size: "75x75",
         format: "Png",
         isCircular: false,
       },
