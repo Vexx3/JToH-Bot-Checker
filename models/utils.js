@@ -210,11 +210,7 @@ async function fetchAwardedDates(userId) {
     throw new Error("Failed to fetch awarded dates after multiple attempts.");
   };
 
-  const allAwardedDates = [];
-  for (const batch of batches) {
-    const batchData = await fetchBatchData(batch);
-    allAwardedDates.push(...(batchData || []));
-  }
+  const allAwardedDates = await Promise.all(batches.map(fetchBatchData));
 
   const towerDifficultyData = await fetchTowerDifficultyData();
 
