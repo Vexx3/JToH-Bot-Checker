@@ -212,6 +212,8 @@ async function fetchAwardedDates(userId) {
 
   const allAwardedDates = (await Promise.all(batches.map(fetchBatchData))).flat();
 
+  const towerDifficultyData = await fetchTowerDifficultyData();
+
   const uniqueBadges = new Set();
   const filteredBadges = allAwardedDates
     .map((awarded) => {
