@@ -61,7 +61,7 @@ const difficultyEmojis = {
 
 async function fetchRobloxAvatar(robloxId) {
   const avatarResponse = await request(
-    "https://thumbnails.roblox.com/v1/users/avatar-bust",
+    "https://thumbnails.roproxy.com/v1/users/avatar-bust",
     {
       method: "GET",
       query: {
@@ -93,7 +93,7 @@ async function fetchRobloxAvatar(robloxId) {
 
 async function fetchRobloxId(username) {
   const response = await request(
-    "https://users.roblox.com/v1/usernames/users",
+    "https://users.roproxy.com/v1/usernames/users",
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -107,7 +107,7 @@ async function fetchRobloxId(username) {
 async function fetchRobloxUserInfo(robloxId) {
   try {
     const userResponse = await request(
-      `https://users.roblox.com/v1/users/${robloxId}`
+      `https://users.roproxy.com/v1/users/${robloxId}`
     );
 
     if (userResponse.statusCode === 200) {
@@ -133,7 +133,7 @@ async function fetchAwardedDateForBadge(userId, badgeIds) {
   for (const badgeId of badgeIds) {
     try {
       const response = await request(
-        `https://badges.roblox.com/v1/users/${userId}/badges/${badgeId}/awarded-date`
+        `https://badges.roproxy.com/v1/users/${userId}/badges/${badgeId}/awarded-date`
       );
 
       if (response.statusCode === 200) {
@@ -143,11 +143,16 @@ async function fetchAwardedDateForBadge(userId, badgeIds) {
         }
       } else {
         console.error(
-          `Failed to fetch awarded date for badge ${badgeId}: ${response.statusCode} - ${await response.body.text()}`
+          `Failed to fetch awarded date for badge ${badgeId}: ${
+            response.statusCode
+          } - ${await response.body.text()}`
         );
       }
     } catch (error) {
-      console.error(`Error in fetchAwardedDateForBadge for badge ${badgeId}:`, error);
+      console.error(
+        `Error in fetchAwardedDateForBadge for badge ${badgeId}:`,
+        error
+      );
     }
   }
   return null;
@@ -167,9 +172,13 @@ async function fetchAwardedDates(userId) {
   const beatingTowerBadges = jtohBadges.filter(
     (badge) => badge.category === "Beating Tower"
   );
-  const badgeIds = beatingTowerBadges
-    .flatMap((badge) => [badge.ktohBadgeId, badge.oldBadgeId, badge.badgeId])
-    .filter(Boolean);
+  const badgeIds = [];
+  beatingTowerBadges.forEach((badge) => {
+    if (badge.ktohBadgeId) badgeIds.push(badge.ktohBadgeId);
+    if (badge.oldBadgeId) badgeIds.push(badge.oldBadgeId);
+    if (badge.badgeId) badgeIds.push(badge.badgeId);
+  });
+
   const batches = chunkArray(badgeIds, 100);
 
   const fetchBatchData = async (batch) => {
@@ -179,7 +188,7 @@ async function fetchAwardedDates(userId) {
     while (attempts < maxRetries) {
       try {
         const awardedDatesResponse = await request(
-          `https://badges.roblox.com/v1/users/${userId}/badges/awarded-dates`,
+          `https://badges.roproxy.com/v1/users/${userId}/badges/awarded-dates`,
           { method: "GET", query: { badgeIds: batch.join(",") } }
         );
 
