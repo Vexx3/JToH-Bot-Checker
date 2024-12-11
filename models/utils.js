@@ -172,12 +172,10 @@ async function fetchAwardedDates(userId) {
   const beatingTowerBadges = jtohBadges.filter(
     (badge) => badge.category === "Beating Tower"
   );
-  const badgeIds = [];
-  beatingTowerBadges.forEach((badge) => {
-    if (badge.ktohBadgeId) badgeIds.push(badge.ktohBadgeId);
-    if (badge.oldBadgeId) badgeIds.push(badge.oldBadgeId);
-    if (badge.badgeId) badgeIds.push(badge.badgeId);
-  });
+
+  const badgeIds = beatingTowerBadges
+    .flatMap((badge) => [badge.ktohBadgeId, badge.oldBadgeId, badge.badgeId])
+    .filter(Boolean);
 
   const batches = chunkArray(badgeIds, 100);
 
