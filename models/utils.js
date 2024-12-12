@@ -61,12 +61,12 @@ const difficultyEmojis = {
 
 async function fetchRobloxAvatar(robloxId) {
   const avatarResponse = await request(
-    "https://thumbnails.roproxy.com/v1/users/avatar-bust",
+    "https://thumbnails.roproxy.com/v1/users/avatar-headshot",
     {
       method: "GET",
       query: {
         userIds: robloxId,
-        size: "75x75",
+        size: "60x60",
         format: "Png",
         isCircular: false,
       },
