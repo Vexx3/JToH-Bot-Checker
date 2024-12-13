@@ -262,7 +262,7 @@ async function fetchAwardedDates(userId) {
     })
     .filter(Boolean);
 
-  await redisClient.set(cacheKey, JSON.stringify(filteredBadges), "EX", 300);
+  await redisClient.set(cacheKey, JSON.stringify(filteredBadges), "EX", 180);
 
   return filteredBadges;
 }
