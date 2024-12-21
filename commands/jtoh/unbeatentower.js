@@ -112,7 +112,7 @@ module.exports = {
                       : "Unknown Area";
 
                     return `**[${
-                      difficultyEmojis[tower.difficultyName] || ""
+                      difficultyEmojis[tower.difficultyName] || tower.difficultyName
                     }]** ${tower.acronym} (${
                       tower.numDifficulty
                     }) - ${areaName}`;
@@ -162,7 +162,7 @@ module.exports = {
                 )
                 .setValue(difficulty)
                 .setDescription(`Show only ${difficulty} towers`)
-                .setEmoji(difficultyEmojis[difficulty.toLowerCase()] ||difficulty.toLowerCase())
+                .setEmoji(difficultyEmojis[difficulty.toLowerCase()] || null)
                 .setDefault(selectedDifficulty === difficulty)
             ),
           ])
