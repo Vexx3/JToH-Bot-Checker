@@ -125,11 +125,23 @@ module.exports = {
 
     const sortedDifficulties = [
       ...new Set(unbeatenTowers.map((t) => t.difficultyName)),
-    ].sort(
+    ];
+    
+    const difficultiesInOrder = sortedDifficulties.filter((difficulty) =>
+      difficultyOrder.includes(difficulty.toLowerCase())
+    );
+    
+    const difficultiesNotInOrder = sortedDifficulties.filter(
+      (difficulty) => !difficultyOrder.includes(difficulty.toLowerCase())
+    );
+    
+    difficultiesInOrder.sort(
       (a, b) =>
         difficultyOrder.indexOf(a.toLowerCase()) -
         difficultyOrder.indexOf(b.toLowerCase())
     );
+    
+    const allSortedDifficulties = [...difficultiesInOrder, ...difficultiesNotInOrder];
 
     const createSelectMenu = (selectedDifficulty) => {
       return new ActionRowBuilder().addComponents(
@@ -143,7 +155,7 @@ module.exports = {
               .setDescription("Reset to default")
               .setEmoji("🔄")
               .setDefault(selectedDifficulty === "all"),
-            ...sortedDifficulties.map((difficulty) =>
+            ...allSortedDifficulties.map((difficulty) =>
               new StringSelectMenuOptionBuilder()
                 .setLabel(
                   difficulty.charAt(0).toUpperCase() + difficulty.slice(1)
