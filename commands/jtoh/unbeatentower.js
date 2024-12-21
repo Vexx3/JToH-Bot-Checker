@@ -112,7 +112,7 @@ module.exports = {
                       : "Unknown Area";
 
                     return `**[${
-                      difficultyEmojis[tower.difficultyName] || tower.difficultyName
+                      difficultyEmojis[tower.difficultyName.toLowerCase()] || tower.difficultyName.toLowerCase()
                     }]** ${tower.acronym} (${
                       tower.numDifficulty
                     }) - ${areaName}`;
