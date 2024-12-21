@@ -162,7 +162,7 @@ module.exports = {
                 )
                 .setValue(difficulty)
                 .setDescription(`Show only ${difficulty} towers`)
-                .setEmoji(difficultyEmojis[difficulty] || null)
+                .setEmoji(difficultyEmojis[difficulty.toLowerCase()] || null)
                 .setDefault(selectedDifficulty === difficulty)
             ),
           ])
