@@ -83,8 +83,12 @@ module.exports = {
         return tower && tower.locationType !== "event";
       });
 
-    unbeatenTowers.sort((a, b) => a.numDifficulty - b.numDifficulty);
-    const topTowers = unbeatenTowers.slice(0, 10);
+      unbeatenTowers.sort((a, b) => {
+        const diffA = a.numDifficulty ?? Infinity;
+        const diffB = b.numDifficulty ?? Infinity;
+        return diffA - diffB;
+      });
+      const topTowers = unbeatenTowers.slice(0, 10);
 
     const createEmbed = (towers) => {
       const easiestDifficulty = towers[0]?.difficultyName;

@@ -57,6 +57,7 @@ const difficultyEmojis = {
   korn: "<:korn:1309374994110742608>",
   nil: "<:nil:1309384772878995467>",
   epic: "<:epic:1309384795318648923>",
+  eschaton: "<:eschaton:1319955405182468156>",
 };
 
 async function fetchRobloxAvatar(robloxId) {
