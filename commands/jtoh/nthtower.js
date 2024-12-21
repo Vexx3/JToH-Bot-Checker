@@ -76,7 +76,7 @@ module.exports = {
     const nthTower = filteredAwardedTowers[nth - 1];
     const embedColor = difficultyColors[nthTower.difficultyName] || "#99AAb5";
     const difficultyEmoji =
-      difficultyEmojis[nthTower.difficultyName] || ":question:";
+      difficultyEmojis[nthTower.difficultyName.toLowerCase()] || tower.difficultyName.toLowerCase();
 
     const embed = new EmbedBuilder()
       .setTitle(`The ${getOrdinalSuffix(nth)} tower beaten by ${username}`)

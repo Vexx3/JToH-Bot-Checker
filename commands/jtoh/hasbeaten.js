@@ -74,7 +74,7 @@ module.exports = {
     ].filter(Boolean);
     const awardedDate = await fetchAwardedDateForBadge(robloxId, badgeIds);
 
-    const difficultyLevel = towerData.difficultyName;
+    const difficultyLevel = towerData.difficultyName.toLowerCase();
     const embedColor = difficultyColors[difficultyLevel] || "#99AAb5";
     const difficultyEmoji = difficultyEmojis[difficultyLevel] || ":question:";
 

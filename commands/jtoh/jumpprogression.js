@@ -77,7 +77,7 @@ module.exports = {
         significantProgression
           .map(
             (tower) =>
-              `**[${difficultyEmojis[tower.difficultyName] || ""}]** ${
+              `**[${difficultyEmojis[tower.difficultyName.toLowerCase()] || tower.difficultyName.toLowerCase()}]** ${
                 tower.acronym
               } (${tower.numDifficulty}) - <t:${Math.floor(
                 new Date(tower.awardedDate).getTime() / 1000

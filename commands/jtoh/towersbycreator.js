@@ -74,7 +74,7 @@ module.exports = {
           .map((tower) => {
             const emoji = tower.difficultyName
               ? difficultyEmojis[tower.difficultyName.toLowerCase()]
-              : ":question:";
+              : ":grey_question:";
             return `**[${emoji}]** ${tower.name}`;
           })
           .join("\n")
