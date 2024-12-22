@@ -160,6 +160,7 @@ async function fetchAwardedDateForBadge(userId, badgeIds) {
 }
 
 const RATE_LIMIT_DELAY = 10000;
+const COOLDOWN_DELAY = 1000;
 
 async function fetchAwardedDates(userId) {
   const cacheKey = `awardedDates_${userId}`;
@@ -222,6 +223,7 @@ async function fetchAwardedDates(userId) {
   for (const batch of batches) {
     const batchData = await fetchBatchData(batch);
     allAwardedDates.push(...(batchData || []));
+    await new Promise((resolve) => setTimeout(resolve, COOLDOWN_DELAY));
   }
 
   const towerDifficultyData = await fetchTowerDifficultyData();
