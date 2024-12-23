@@ -49,31 +49,34 @@ module.exports = {
       .filter((tower) => tower.areaCode === areaCode)
       .sort((a, b) => a.numDifficulty - b.numDifficulty);
 
-    const embedFields = towersInArea.map((tower) => {
-      const badge = badgeInfo.find((badge) => badge.acronym === tower.acronym);
-      const hasBeaten = badge && awardedTowers.some(
-        (awarded) =>
-          awarded.id === badge.ktohBadgeId ||
-          awarded.id === badge.oldBadgeId ||
-          awarded.id === badge.badgeId
-      );
-      const status = hasBeaten
-        ? "<:yes:1314114863290781707>"
-        : "<:no:1314114886598660147>";
-      const emoji =
-        difficultyEmojis[tower.difficultyName.toLowerCase()] ||
-        ":grey_question:";
-      return {
-        name: "Completion",
-        value: `**[${emoji}]** ${tower.acronym} - ${status}`,
-      };
-    });
+    const completionList = towersInArea
+      .map((tower) => {
+        const badge = badgeInfo.find(
+          (badge) => badge.acronym === tower.acronym
+        );
+        const hasBeaten =
+          badge &&
+          awardedTowers.some(
+            (awarded) =>
+              awarded.id === badge.ktohBadgeId ||
+              awarded.id === badge.oldBadgeId ||
+              awarded.id === badge.badgeId
+          );
+        const status = hasBeaten
+          ? "<:yes:1314114863290781707>"
+          : "<:no:1314114886598660147>";
+        const emoji =
+          difficultyEmojis[tower.difficultyName.toLowerCase()] ||
+          ":grey_question:";
+        return `**[${emoji}]** ${tower.acronym} - ${status}`;
+      })
+      .join("\n");
 
     const embed = new EmbedBuilder()
       .setTitle(`Tower completion in area ${areaCode} for ${username}`)
       .setColor("#58b9ff")
       .setThumbnail(avatarUrl)
-      .addFields(embedFields);
+      .addFields({ name: "Completion", value: completionList });
 
     await interaction.editReply({ embeds: [embed] });
   },
