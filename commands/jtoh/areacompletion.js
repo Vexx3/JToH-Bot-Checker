@@ -50,7 +50,7 @@ module.exports = {
         (tower) =>
           tower.areaCode === areaCode &&
           tower.towerType !== "TowerRush" &&
-          tower.accessible === "n"
+          tower.accessible !== "n"
       )
       .sort((a, b) => a.numDifficulty - b.numDifficulty);
 
