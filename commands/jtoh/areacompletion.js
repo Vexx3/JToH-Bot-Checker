@@ -11,6 +11,7 @@ const {
   fetchTowerDifficultyData,
   fetchBadgeInfo,
   fetchAwardedDates,
+  fetchAreaData,
 } = require("../../models/utils");
 
 module.exports = {
