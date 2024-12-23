@@ -243,6 +243,10 @@ async function fetchAwardedDates(userId, includeEvents = false) {
           (tower) => tower.acronym === matchedJToHBadge.acronym
         );
 
+        if (towerData) {
+          console.log(`Tower: ${towerData.acronym}, Type: ${towerData.towerType}, Accessible: ${towerData.accessible}`);
+        }
+
         if (
           towerData &&
           (includeEvents || towerData.locationType !== "event") &&
