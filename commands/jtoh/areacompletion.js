@@ -51,7 +51,9 @@ module.exports = {
     }
 
     const areaData = await fetchAreaData();
-    const area = areaData.find((area) => area.acronym.toLowerCase() === areaCode);
+    const area = areaData.find(
+      (area) => area.acronym.toLowerCase() === areaCode
+    );
 
     if (!area || area.accessible === "n") {
       return interaction.editReply(
@@ -67,6 +69,7 @@ module.exports = {
     const towersInArea = towerData
       .filter(
         (tower) =>
+          tower.areaCode &&
           tower.areaCode.toLowerCase() === areaCode &&
           tower.towerType !== "TowerRush" &&
           tower.accessible !== "n"
