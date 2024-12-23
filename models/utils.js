@@ -342,6 +342,7 @@ async function fetchAreaData() {
       return rows.values.map((row) => ({
         areaName: row[0],
         acronym: row[3],
+        accessible: row[6],
       }));
     } else {
       console.log("No data found in Area Difficulty.");

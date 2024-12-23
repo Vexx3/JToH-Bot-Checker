@@ -27,17 +27,35 @@ module.exports = {
     )
     .addStringOption((option) =>
       option.setName("area_code").setDescription("Area code").setRequired(true)
-    ),
+    )
+    .setIntegrationTypes([
+      ApplicationIntegrationType.GuildInstall,
+      ApplicationIntegrationType.UserInstall,
+    ])
+    .setContexts([
+      InteractionContextType.Guild,
+      InteractionContextType.BotDM,
+      InteractionContextType.PrivateChannel,
+    ]),
   async execute(interaction) {
     await interaction.deferReply();
 
     const username = interaction.options.getString("username");
-    const areaCode = interaction.options.getString("area_code");
+    const areaCode = interaction.options.getString("area_code").toLowerCase();
 
     const robloxId = await fetchRobloxId(username);
 
     if (!robloxId) {
       return interaction.editReply(`User ${username} not found.`);
+    }
+
+    const areaData = await fetchAreaData();
+    const area = areaData.find((area) => area.acronym === areaCode);
+
+    if (!area || area.accessible === "n") {
+      return interaction.editReply(
+        `Area code ${areaCode} not found or not accessible.`
+      );
     }
 
     const avatarUrl = await fetchRobloxAvatar(robloxId);
@@ -78,10 +96,13 @@ module.exports = {
       .join("\n");
 
     const embed = new EmbedBuilder()
-      .setTitle(`Tower completion in area ${areaCode} for ${username}`)
+      .setTitle(`Area completion for ${username}`)
       .setColor("#58b9ff")
       .setThumbnail(avatarUrl)
-      .addFields({ name: "Completion", value: completionList });
+      .addFields(
+        { name: "Area", value: area.areaName },
+        { name: "Completion", value: completionList }
+      );
 
     await interaction.editReply({ embeds: [embed] });
   },
