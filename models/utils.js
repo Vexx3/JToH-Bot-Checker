@@ -57,7 +57,7 @@ const difficultyEmojis = {
   korn: "<:korn:1309374994110742608>",
   nil: "<:nil:1309384772878995467>",
   epic: "<:epic:1309384795318648923>",
-  eschaton: "<:eschaton:1319955405182468156>",
+  eschaton: "<:Eschaton:1319955405182468156>",
 };
 
 async function fetchRobloxAvatar(robloxId) {
@@ -162,8 +162,8 @@ async function fetchAwardedDateForBadge(userId, badgeIds) {
 const RATE_LIMIT_DELAY = 10000;
 const COOLDOWN_DELAY = 1000;
 
-async function fetchAwardedDates(userId) {
-  const cacheKey = `awardedDates_${userId}`;
+async function fetchAwardedDates(userId, includeEvents = false) {
+  const cacheKey = `awardedDates_${userId}:${includeEvents}`;
   const cachedData = await redisClient.get(cacheKey);
 
   if (cachedData) {
@@ -243,7 +243,7 @@ async function fetchAwardedDates(userId) {
           (tower) => tower.acronym === matchedJToHBadge.acronym
         );
 
-        if (towerData && towerData.locationType !== "event") {
+        if (towerData && includeEvents || towerData.locationType !== "event") {
           const badgeKey = matchedJToHBadge.acronym;
           if (!uniqueBadges.has(badgeKey)) {
             uniqueBadges.add(badgeKey);

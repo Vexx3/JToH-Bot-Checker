@@ -132,7 +132,7 @@ function extractCreators($) {
 }
 
 function extractImage($) {
-  const imgSrc = $("figure.pi-item.pi-image img").attr("src");
+  const imgSrc = $("figure.pi-item.pi-image a").attr("href");
   return imgSrc ? imgSrc.trim() : null;
 }
 
