@@ -65,7 +65,7 @@ module.exports = {
         ":grey_question:";
       return {
         name: "Completion",
-        value: `${emoji} ${tower.name} - ${status}`,
+        value: `**[${emoji}]** ${tower.acronym} - ${status}`,
       };
     });
 
