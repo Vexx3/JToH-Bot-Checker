@@ -46,7 +46,12 @@ module.exports = {
     const badgeInfo = await fetchBadgeInfo();
 
     const towersInArea = towerData
-      .filter((tower) => tower.areaCode === areaCode)
+      .filter(
+        (tower) =>
+          tower.areaCode === areaCode &&
+          tower.towerType !== "TowerRush" &&
+          tower.accessible === "n"
+      )
       .sort((a, b) => a.numDifficulty - b.numDifficulty);
 
     const completionList = towersInArea
