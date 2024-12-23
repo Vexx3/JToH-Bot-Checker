@@ -50,7 +50,7 @@ module.exports = {
     }
 
     const areaData = await fetchAreaData();
-    const area = areaData.find((area) => area.acronym === areaCode);
+    const area = areaData.find((area) => area.acronym.toLowerCase() === areaCode);
 
     if (!area || area.accessible === "n") {
       return interaction.editReply(
