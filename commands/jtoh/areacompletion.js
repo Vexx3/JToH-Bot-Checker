@@ -67,7 +67,7 @@ module.exports = {
     const towersInArea = towerData
       .filter(
         (tower) =>
-          tower.areaCode === areaCode &&
+          tower.areaCode.toLowerCase() === areaCode &&
           tower.towerType !== "TowerRush" &&
           tower.accessible !== "n"
       )
