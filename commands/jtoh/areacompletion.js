@@ -104,10 +104,7 @@ module.exports = {
       .setTitle(`Area completion for ${username}`)
       .setColor("#58b9ff")
       .setThumbnail(avatarUrl)
-      .addFields(
-        { name: "Area", value: area.areaName },
-        { name: "Completion", value: completionList }
-      );
+      .setDescription(`Area\n${area.areaName}\n\n${completionList}`);
 
     await interaction.editReply({ embeds: [embed] });
   },
