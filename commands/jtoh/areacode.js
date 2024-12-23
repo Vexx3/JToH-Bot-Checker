@@ -22,7 +22,7 @@ module.exports = {
   async execute(interaction) {
     const areaData = await fetchAreaData();
     const acronyms = areaData
-      .map((area) => `${area.name} - ${area.acronym}`)
+      .map((area) => `${area.areaName} - ${area.acronym}`)
       .join("\n");
 
     const embed = new EmbedBuilder()
