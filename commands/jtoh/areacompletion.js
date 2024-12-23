@@ -51,7 +51,7 @@ module.exports = {
 
     const embedFields = towersInArea.map((tower) => {
       const badge = badgeInfo.find((badge) => badge.acronym === tower.acronym);
-      const hasBeaten = awardedTowers.some(
+      const hasBeaten = badge && awardedTowers.some(
         (awarded) =>
           awarded.id === badge.ktohBadgeId ||
           awarded.id === badge.oldBadgeId ||
