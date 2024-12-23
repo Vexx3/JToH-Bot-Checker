@@ -244,8 +244,8 @@ async function fetchAwardedDates(userId, includeEvents = false) {
         );
 
         if (
-          (towerData && includeEvents) ||
-          towerData.locationType !== "event"
+          towerData &&
+          (includeEvents || towerData.locationType !== "event")
         ) {
           const badgeKey = matchedJToHBadge.acronym;
           if (!uniqueBadges.has(badgeKey)) {
