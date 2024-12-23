@@ -245,10 +245,10 @@ async function fetchAwardedDates(userId, includeEvents = false) {
 
         if (
           towerData &&
-          ((includeEvents &&
-            towerData.towerType !== "TowerRush" &&
-            towerData.accessible !== "n") ||
-            (!includeEvents && towerData.locationType !== "event"))
+          (includeEvents || towerData.locationType !== "event") &&
+          (!includeEvents ||
+            (towerData.towerType !== "TowerRush" &&
+              towerData.accessible === "n"))
         ) {
           const badgeKey = matchedJToHBadge.acronym;
           if (!uniqueBadges.has(badgeKey)) {
