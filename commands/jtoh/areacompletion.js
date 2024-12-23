@@ -76,7 +76,7 @@ module.exports = {
       .setTitle(`Tower completion in area ${areaCode} for ${username}`)
       .setColor("#58b9ff")
       .setThumbnail(avatarUrl)
-      .addFields({ name: "Completion", value: completionList });
+      .setDescription(`**Completion**\n${completionList}`);
 
     await interaction.editReply({ embeds: [embed] });
   },
