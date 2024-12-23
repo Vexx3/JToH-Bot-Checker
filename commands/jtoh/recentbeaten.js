@@ -57,7 +57,7 @@ module.exports = {
     const top10RecentTowers = awardedTowers.slice(0, 10);
 
     const hardestTowerDifficulty = top10RecentTowers[0]?.difficultyName;
-    const embedColor = difficultyColors[hardestTowerDifficulty];
+    const embedColor = difficultyColors[hardestTowerDifficulty] || "#000000";
     const embed = new EmbedBuilder()
       .setTitle(`10 most recent tower(s) for ${username}`)
       .setColor(embedColor)
@@ -67,9 +67,12 @@ module.exports = {
         value: top10RecentTowers
           .map(
             (tower) =>
-              `**[${difficultyEmojis[tower.difficultyName.toLowerCase()] || tower.difficultyName.toLowerCase()}]** ${
-                tower.acronym
-              } (${tower.numDifficulty}) - <t:${Math.floor(
+              `**[${
+                difficultyEmojis[tower.difficultyName.toLowerCase()] ||
+                tower.difficultyName.toLowerCase()
+              }]** ${tower.acronym} (${
+                tower.numDifficulty || "nan"
+              }) - <t:${Math.floor(
                 new Date(tower.awardedDate).getTime() / 1000
               )}:R>`
           )

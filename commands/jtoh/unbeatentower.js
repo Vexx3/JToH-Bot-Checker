@@ -83,16 +83,12 @@ module.exports = {
         return tower && tower.locationType !== "event";
       });
 
-      unbeatenTowers.sort((a, b) => {
-        const diffA = a.numDifficulty ?? Infinity;
-        const diffB = b.numDifficulty ?? Infinity;
-        return diffA - diffB;
-      });
-      const topTowers = unbeatenTowers.slice(0, 10);
+    unbeatenTowers.sort((a, b) => (a.numDifficulty || 0) - (b.numDifficulty || 0));
+    const topTowers = unbeatenTowers.slice(0, 10);
 
     const createEmbed = (towers) => {
       const easiestDifficulty = towers[0]?.difficultyName;
-      const embedColor = difficultyColors[easiestDifficulty] || "#99AAb5";
+      const embedColor = difficultyColors[easiestDifficulty] || "#000000";
       return new EmbedBuilder()
         .setTitle(`10 easiest unbeaten tower(s) for ${username}`)
         .setColor(embedColor)
@@ -112,9 +108,10 @@ module.exports = {
                       : "Unknown Area";
 
                     return `**[${
-                      difficultyEmojis[tower.difficultyName.toLowerCase()] || tower.difficultyName.toLowerCase()
+                      difficultyEmojis[tower.difficultyName.toLowerCase()] ||
+                      tower.difficultyName.toLowerCase()
                     }]** ${tower.acronym} (${
-                      tower.numDifficulty
+                      tower.numDifficulty || "nan"
                     }) - ${areaName}`;
                   })
                   .join("\n"),
@@ -126,22 +123,25 @@ module.exports = {
     const sortedDifficulties = [
       ...new Set(unbeatenTowers.map((t) => t.difficultyName)),
     ];
-    
+
     const difficultiesInOrder = sortedDifficulties.filter((difficulty) =>
       difficultyOrder.includes(difficulty.toLowerCase())
     );
-    
+
     const difficultiesNotInOrder = sortedDifficulties.filter(
       (difficulty) => !difficultyOrder.includes(difficulty.toLowerCase())
     );
-    
+
     difficultiesInOrder.sort(
       (a, b) =>
         difficultyOrder.indexOf(a.toLowerCase()) -
         difficultyOrder.indexOf(b.toLowerCase())
     );
-    
-    const allSortedDifficulties = [...difficultiesInOrder, ...difficultiesNotInOrder];
+
+    const allSortedDifficulties = [
+      ...difficultiesInOrder,
+      ...difficultiesNotInOrder,
+    ];
 
     const createSelectMenu = (selectedDifficulty) => {
       return new ActionRowBuilder().addComponents(

@@ -51,11 +51,13 @@ module.exports = {
       );
     }
 
-    awardedTowers.sort((a, b) => b.numDifficulty - a.numDifficulty);
+    awardedTowers.sort(
+      (a, b) => (b.numDifficulty || 0) - (a.numDifficulty || 0)
+    );
     const top10HardestTowers = awardedTowers.slice(0, 10);
 
     const hardestDifficulty = top10HardestTowers[0]?.difficultyName;
-    const embedColor = difficultyColors[hardestDifficulty];
+    const embedColor = difficultyColors[hardestDifficulty] || "#000000";
     const embed = new EmbedBuilder()
       .setTitle(`10 hardest tower(s) for ${username}`)
       .setColor(embedColor)
@@ -65,9 +67,12 @@ module.exports = {
         value: top10HardestTowers
           .map(
             (tower) =>
-              `**[${difficultyEmojis[tower.difficultyName.toLowerCase()] || tower.difficultyName.toLowerCase()}]** ${
-                tower.acronym
-              } (${tower.numDifficulty}) - <t:${Math.floor(
+              `**[${
+                difficultyEmojis[tower.difficultyName.toLowerCase()] ||
+                tower.difficultyName.toLowerCase()
+              }]** ${tower.acronym} (${
+                tower.numDifficulty || "nan"
+              }) - <t:${Math.floor(
                 new Date(tower.awardedDate).getTime() / 1000
               )}:R>`
           )
