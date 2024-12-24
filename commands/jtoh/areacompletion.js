@@ -80,7 +80,9 @@ module.exports = {
     const completionList = towersInArea
       .map((tower) => {
         const badge = badgeInfo.find(
-          (badge) => badge.acronym === tower.acronym
+          (badge) =>
+            badge.acronym === tower.acronym &&
+            badge.category === "Beating Tower"
         );
         const hasBeaten =
           badge &&
@@ -104,7 +106,9 @@ module.exports = {
       .setTitle(`Area completion for ${username}`)
       .setColor("#58b9ff")
       .setThumbnail(avatarUrl)
-      .setDescription(`**Area**\n${area.areaName}\n\n${completionList}`);
+      .setDescription(
+        `**Area**\n${area.areaName}\n**Completion**\n${completionList}`
+      );
 
     await interaction.editReply({ embeds: [embed] });
   },
