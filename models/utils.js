@@ -175,35 +175,34 @@ async function fetchAwardedDates(userId, includeEvents = false) {
     (badge) => badge.category === "Beating Tower"
   );
 
-  const badgeIdPriority = beatingTowerBadges.map((badge) => ({
-    ktohBadgeId: badge.ktohBadgeId,
-    oldBadgeId: badge.oldBadgeId,
-    badgeId: badge.badgeId,
-    acronym: badge.acronym,
-  }));
+  const badgeIds = beatingTowerBadges
+    .flatMap((badge) => [badge.ktohBadgeId, badge.oldBadgeId, badge.badgeId])
+    .filter(Boolean);
 
-  const fetchBadgeData = async (badgeIds) => {
+  const batches = chunkArray(badgeIds, 100);
+
+  const fetchBatchData = async (batch) => {
     let attempts = 0;
     const maxRetries = 5;
 
     while (attempts < maxRetries) {
       try {
-        const response = await request(
+        const awardedDatesResponse = await request(
           `https://badges.roproxy.com/v1/users/${userId}/badges/awarded-dates`,
-          { method: "GET", query: { badgeIds: badgeIds.join(",") } }
+          { method: "GET", query: { badgeIds: batch.join(",") } }
         );
 
-        if (response.statusCode === 200) {
-          const awardedDatesData = await response.body.json();
-          return awardedDatesData.data || [];
+        if (awardedDatesResponse.statusCode === 200) {
+          const awardedDatesData = await awardedDatesResponse.body.json();
+          return awardedDatesData.data;
         }
 
-        if (response.statusCode === 429) {
+        if (awardedDatesResponse.statusCode === 429) {
           await new Promise((resolve) => setTimeout(resolve, RATE_LIMIT_DELAY));
         } else {
           console.error(
             `Unexpected error (Attempt ${attempts + 1}): ${
-              response.statusCode
+              awardedDatesResponse.statusCode
             }`
           );
         }
@@ -221,25 +220,14 @@ async function fetchAwardedDates(userId, includeEvents = false) {
   };
 
   const allAwardedDates = [];
-  const usedBadgeIds = new Set();
-
-  for (const badge of badgeIdPriority) {
-    const idsToCheck = [badge.ktohBadgeId, badge.oldBadgeId, badge.badgeId].filter(
-      (id) => id && !usedBadgeIds.has(id)
-    );
-
-    if (idsToCheck.length > 0) {
-      const batchData = await fetchBadgeData(idsToCheck);
-      if (batchData.length > 0) {
-        allAwardedDates.push(...batchData);
-        idsToCheck.forEach((id) => usedBadgeIds.add(id));
-      }
-    }
-
+  for (const batch of batches) {
+    const batchData = await fetchBatchData(batch);
+    allAwardedDates.push(...(batchData || []));
     await new Promise((resolve) => setTimeout(resolve, COOLDOWN_DELAY));
   }
 
   const towerDifficultyData = await fetchTowerDifficultyData();
+
   const uniqueBadges = new Set();
   const filteredBadges = allAwardedDates
     .map((awarded) => {
