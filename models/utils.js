@@ -175,45 +175,35 @@ async function fetchAwardedDates(userId, includeEvents = false) {
     (badge) => badge.category === "Beating Tower"
   );
 
-  const processedAcronyms = new Set();
-  const badgeIdMap = {};
+  const badgeIdPriority = beatingTowerBadges.map((badge) => ({
+    ktohBadgeId: badge.ktohBadgeId,
+    oldBadgeId: badge.oldBadgeId,
+    badgeId: badge.badgeId,
+    acronym: badge.acronym,
+  }));
 
-  beatingTowerBadges.forEach((badge) => {
-    if (!processedAcronyms.has(badge.acronym)) {
-      badgeIdMap[badge.acronym] = [
-        badge.ktohBadgeId,
-        badge.oldBadgeId,
-        badge.badgeId,
-      ].filter(Boolean);
-      processedAcronyms.add(badge.acronym);
-    }
-  });
-
-  const badgeIds = Object.values(badgeIdMap).flat();
-  const batches = chunkArray(badgeIds, 100);
-
-  const fetchBatchData = async (batch) => {
+  const fetchBadgeData = async (badgeIds) => {
     let attempts = 0;
     const maxRetries = 5;
 
     while (attempts < maxRetries) {
       try {
-        const awardedDatesResponse = await request(
+        const response = await request(
           `https://badges.roproxy.com/v1/users/${userId}/badges/awarded-dates`,
-          { method: "GET", query: { badgeIds: batch.join(",") } }
+          { method: "GET", query: { badgeIds: badgeIds.join(",") } }
         );
 
-        if (awardedDatesResponse.statusCode === 200) {
-          const awardedDatesData = await awardedDatesResponse.body.json();
-          return awardedDatesData.data;
+        if (response.statusCode === 200) {
+          const awardedDatesData = await response.body.json();
+          return awardedDatesData.data || [];
         }
 
-        if (awardedDatesResponse.statusCode === 429) {
+        if (response.statusCode === 429) {
           await new Promise((resolve) => setTimeout(resolve, RATE_LIMIT_DELAY));
         } else {
           console.error(
             `Unexpected error (Attempt ${attempts + 1}): ${
-              awardedDatesResponse.statusCode
+              response.statusCode
             }`
           );
         }
@@ -231,30 +221,36 @@ async function fetchAwardedDates(userId, includeEvents = false) {
   };
 
   const allAwardedDates = [];
-  for (const batch of batches) {
-    const batchData = await fetchBatchData(batch);
-    allAwardedDates.push(...(batchData || []));
+  const usedBadgeIds = new Set();
+
+  for (const badge of badgeIdPriority) {
+    const idsToCheck = [badge.ktohBadgeId, badge.oldBadgeId, badge.badgeId].filter(
+      (id) => id && !usedBadgeIds.has(id)
+    );
+
+    if (idsToCheck.length > 0) {
+      const batchData = await fetchBadgeData(idsToCheck);
+      if (batchData.length > 0) {
+        allAwardedDates.push(...batchData);
+        idsToCheck.forEach((id) => usedBadgeIds.add(id));
+      }
+    }
+
     await new Promise((resolve) => setTimeout(resolve, COOLDOWN_DELAY));
   }
 
   const towerDifficultyData = await fetchTowerDifficultyData();
-
-  const filteredBadges = [];
   const uniqueBadges = new Set();
-  
-  for (const awarded of allAwardedDates) {
-    const matchedJToHBadge = jtohBadges.find(
-      (badge) =>
-        badge.ktohBadgeId === awarded.badgeId ||
-        badge.oldBadgeId === awarded.badgeId ||
-        badge.badgeId === awarded.badgeId
-    );
+  const filteredBadges = allAwardedDates
+    .map((awarded) => {
+      const matchedJToHBadge = jtohBadges.find(
+        (jtohBadge) =>
+          jtohBadge.ktohBadgeId === awarded.badgeId ||
+          jtohBadge.oldBadgeId === awarded.badgeId ||
+          jtohBadge.badgeId === awarded.badgeId
+      );
 
-    if (matchedJToHBadge) {
-      const badgeKey = matchedJToHBadge.acronym;
-      if (!uniqueBadges.has(badgeKey)) {
-        uniqueBadges.add(badgeKey);
-
+      if (matchedJToHBadge) {
         const towerData = towerDifficultyData.find(
           (tower) => tower.acronym === matchedJToHBadge.acronym
         );
@@ -263,20 +259,26 @@ async function fetchAwardedDates(userId, includeEvents = false) {
           towerData &&
           (includeEvents || towerData.locationType !== "event")
         ) {
-          filteredBadges.push({
-            name: matchedJToHBadge.name,
-            id: awarded.badgeId,
-            acronym: matchedJToHBadge.acronym,
-            difficultyName: towerData.difficultyName,
-            numDifficulty: towerData.numDifficulty,
-            location: towerData.location,
-            towerType: towerData.towerType,
-            awardedDate: awarded.awardedDate,
-          });
+          const badgeKey = matchedJToHBadge.acronym;
+          if (!uniqueBadges.has(badgeKey)) {
+            uniqueBadges.add(badgeKey);
+            return {
+              name: matchedJToHBadge.name,
+              id: awarded.badgeId,
+              acronym: matchedJToHBadge.acronym,
+              difficultyName: towerData.difficultyName,
+              numDifficulty: towerData.numDifficulty,
+              location: towerData.location,
+              towerType: towerData.towerType,
+              awardedDate: awarded.awardedDate,
+            };
+          }
         }
       }
-    }
-  }
+
+      return null;
+    })
+    .filter(Boolean);
 
   await redisClient.set(cacheKey, JSON.stringify(filteredBadges), "EX", 300);
 
